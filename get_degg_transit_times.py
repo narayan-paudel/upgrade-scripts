@@ -8,9 +8,14 @@ from bson.objectid import ObjectId
 from fatcat_db.forwarder import Tunnel
 from fatcat_db.mongoreader import MongoReader
 
+from pathlib import Path
+home = str(Path.home())
+
 
 # 2025-01-15 - example script to grab degg pmt transit time measurements
-output_dir = "/home/narayan/research_ua/icecube/Upgrade/timing_calibration/data/degg_transit/"
+#Ubuntu or mac
+# output_dir = "/home/narayan/research_ua/icecube/Upgrade/timing_calibration/data/degg_transit/"
+output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/degg_transit/"
 
 
 def main():
@@ -36,6 +41,8 @@ def main():
                                             'meas_name': 'pmt-timing-resolution-info'}))
     
     print('{0} measurements found'.format(len(docs)))
+    if len(docs)==0:
+        print(args.uid)
 
     pmts = []
     for n, doc in enumerate(docs):

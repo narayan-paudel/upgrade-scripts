@@ -7,6 +7,11 @@ import json
 from fatcat_db.forwarder import Tunnel
 from fatcat_db.mongoreader import MongoReader
 
+from pathlib import Path
+home = str(Path.home())
+
+data_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/"
+
 
 def main():
 
@@ -50,7 +55,7 @@ def main():
             print('removing', oldid)
             uids.remove(oldid)
     
-    filename = 'uids_'+xdevice+'.json'
+    filename = data_dir+'domlist/'+'uids_'+xdevice+'.json'
     print('writing', filename)
     with open(filename, 'w') as jfile:
         json.dump(uids, jfile, separators=(', ', ': '), indent=4)

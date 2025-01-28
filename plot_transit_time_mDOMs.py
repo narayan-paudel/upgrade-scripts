@@ -17,17 +17,23 @@ plt.rcParams["font.family"] = "serif"
 plt.rcParams["mathtext.fontset"] = "dejavuserif"
 plt.rcParams.update({'font.size': 10})
 
-plotFolder = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/degg_transit"
-degg_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/") if f.is_dir()]
-# print(degg_list)
+plotFolder = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
+mdom_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/") if f.is_dir()][:]
+print(mdom_list)
 
 
 from customColors import qualitative_colors
 
 colorsCustom = qualitative_colors(12)
 colorsCustom2 = colorsCustom + colorsCustom
+colorsCustom4 = colorsCustom2 + colorsCustom2
+colorsCustom16 = colorsCustom4 + colorsCustom4 + colorsCustom4 + colorsCustom4
+colorsCustom64 = colorsCustom16+colorsCustom16+colorsCustom16+colorsCustom16
 colorsIter = iter(colorsCustom)
 colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']
+colors = ['#1e4c7b','#498c9c','#89b3a2','#f1d27e','#d56b48','#1e1e3e',"#5a5a8c","#9c7bbc","#d45e7d",'#f7b1a1']
+colornames = ["Blue, Bright, Coastal    Green    Modern    Orange    Spring    Teal    Vibrant    Yellow,    70s",
+              "Aesthetic    Bright    Deep    Indigo    Purple    Red    Soft    Summer    Vintage Starman"]
 
 def extract_histogram(json_file):
     with open(json_file, 'r') as f:
@@ -36,7 +42,8 @@ def extract_histogram(json_file):
     y_values = data["meas_data"][0]['y_values']
     x_min = data["meas_data"][0]["x_min"]
     x_max = data["meas_data"][0]["x_max"]
-    x_values = np.linspace(x_min,x_max,99)
+    n_bins = data["meas_data"][0]["n_bins"]
+    x_values = np.linspace(x_min,x_max,n_bins)
     x_label = data["meas_data"][0]["x_label"]
     device_uid = data["device_uid"]
     pmt = data['subdevice_uid'].split('_')[-1]
@@ -44,20 +51,9 @@ def extract_histogram(json_file):
     temperature = data["meas_data"][0]["temperature"]
     # print(data["meas_data"][])
 
-    fit_x_values = np.linspace(x_min,x_max,99)
-    fit_y_values = data["meas_data"][0]["fit_y_values"]
-    return x_values,y_values,fit_x_values,fit_y_values,x_label,device_uid,pmt,run,temperature,meas_time,
-
-def extract_temperature(json_file):
-    with open(json_file, 'r') as f:
-        data = json.load(f)
-    return data["meas_data"][0]["temperature"]
-
-def extract_device(json_file):
-    with open(json_file, 'r') as f:
-        data = json.load(f)
-    return data["device_uid"],data["subdevice_uid"]
-
+    # fit_x_values = np.linspace(x_min,x_max,n_bins)
+    # fit_y_values = data["meas_data"][0]["fit_y_values"]
+    return x_values,y_values,x_label,device_uid,pmt,run,temperature,meas_time,
 
 def get_chi2(json_file):
     '''
@@ -73,15 +69,16 @@ def get_chi2(json_file):
 
 
 
-def degg_transit_plot(file_list):
+def mdom_transit_plot(file_list):
     n_files = len(file_list)
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
     for i,ifile in enumerate(file_list):
-        x_values,y_values,fit_x_values,fit_y_values,x_label,device_uid,pmt,run,temperature,meas_time = extract_histogram(ifile)
-        ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom2[i],label=f"{str(device_uid)} {str(pmt)} R{run} T{temperature:.2f}",alpha=1)    
-        ax.plot(fit_x_values,fit_y_values,ls='--',lw = 2.5,c=colorsCustom2[i],alpha=0.5)
+        # print(f"no of file {i}")
+        x_values,y_values,x_label,device_uid,pmt,run,temperature,meas_time = extract_histogram(ifile)
+        ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom64[i],label=f"{str(device_uid)} {str(pmt)} R{run} T{temperature:.2f}",alpha=1)    
+        # ax.plot(fit_x_values,fit_y_values,ls='--',lw = 2.5,c=colorsCustom2[i],alpha=0.5)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"{}".format(x_label), fontsize=22)
     ax.set_ylabel("count", fontsize=22)
@@ -90,14 +87,17 @@ def degg_transit_plot(file_list):
     # ax.set_yscale("log")
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.00),loc="lower center")
-    plt.savefig(plotFolder+f"/transit_time{device_uid}.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/transit_time{device_uid}.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
-def make_transit_plots(degg_list):
-    for idegg in degg_list[:]:
-        ifiles = sorted(glob.glob(idegg+"/DEgg*"))
-        degg_transit_plot(ifiles)
+def make_transit_plots(mdom_list):
+    for imdom in mdom_list[:]:
+        ifiles = sorted(glob.glob(imdom+"/m*"))
+        if len(ifiles)>0:
+            mdom_transit_plot(ifiles)
+        else:
+            print(f"the files list is empty for {imdom}")
 
 def extract_fit_params(json_file):
     with open(json_file, 'r') as f:
@@ -108,26 +108,6 @@ def extract_fit_params(json_file):
     chi2,pvalue = stats.chisquare(y_values,fit_y_values,ddof=3,sum_check=False)
     fit_params = data["meas_data"][0]["fit_params"]
     return *fit_params,chi2,pvalue
-
-def plot_temp(temp_list):
-    print(f"min {min(temp_list)}max{max(temp_list)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    # bins = np.linspace(int(min(temp_list)-1),int(max(temp_list)+1),int((max(temp_list)-min(temp_list))/0.5)+1)
-    bins = np.linspace(-30,40,141)
-    ax.hist(temp_list,bins=bins,histtype="step",color="orange",lw=4.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"temperature [$^{\circ}$C]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_temp.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_temp.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
 
 def plot_mu(mu_list):
     print(f"min {min(mu_list)}max{max(mu_list)}")
@@ -226,28 +206,18 @@ def plot_chi2mu(chi2_list,mu_list):
 
 
 
-def transit_params(degg_list):
+def transit_params(mdom_list):
     file_list = []
-    for idegg in degg_list:
-        ifiles = sorted(glob.glob(idegg+"/DEgg*"))
+    for imdom in mdom_list:
+        ifiles = sorted(glob.glob(imdom+"/*"))
         file_list += ifiles
     a_list = []
     mu_list = []
     sigma_list = []
     chi2_list = []
     pvalue_list = []
-    temp_list = []
-    doms_with_temp = []
     for ifile in file_list:
         a,mu,sigma,chi2,pvalue = extract_fit_params(ifile)
-        itemp = extract_temperature(ifile)
-        idevice,isubdevice = extract_device(ifile)
-        if itemp < -10:
-            doms_with_temp.append(isubdevice)
-        
-
-        # if -10 <itemp < 10:
-        #     print(ifile,itemp)
         # print(chi2,pvalue)
         # chi2,pvalue  = get_chi2(ifile)
         if mu > -500 and sigma < 500:
@@ -255,35 +225,21 @@ def transit_params(degg_list):
             sigma_list.append(sigma)
             chi2_list.append(chi2)
             a_list.append(a)
-            temp_list.append(itemp)
         else:
             print(f"please check {ifile}")
     # print(mu_list)
-    doms_with_temp = [idom.split('_')[-1] for idom in doms_with_temp]
-    print(f"dom number {len(list(set(doms_with_temp)))}")
-    print(list(set(doms_with_temp)))
     plot_mu(mu_list)
     plot_sigma(sigma_list)
     plot_chi2(chi2_list)
     plot_chi2mu(chi2_list,mu_list)
     plot_chi2Sigma(chi2_list,sigma_list)
-    plot_temp(temp_list)
     return a_list,mu_list,sigma_list
 
 
-def count_DOM_PMTs(degg_list):
-    file_list = []
-    for idegg in degg_list[:]:
-        ifiles = sorted(glob.glob(idegg+"/DEgg*"))
-        ifiles = [jfile for jfile in ifiles if extract_temperature(jfile)<-10]
-        ifiles = list(set([jfile.split("_")[-3] for jfile in ifiles]))
-        if len(ifiles)<2:
-            print(f"{idegg} has {len(ifiles)} DOM measurements")
-            print(ifiles)
 
-count_DOM_PMTs(degg_list)
 
-# transit_params(degg_list)
+
+# transit_params(mdom_list)
     
     
-# make_transit_plots(degg_list)
+make_transit_plots(mdom_list)

@@ -8,8 +8,12 @@ from bson.objectid import ObjectId
 from fatcat_db.forwarder import Tunnel
 from fatcat_db.mongoreader import MongoReader
 
+from pathlib import Path
+home = str(Path.home())
+
 
 # 2025-01-15 - example script to grab mdom pmt transit time measurements
+output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/mdom_transit/"
 
 
 def main():
@@ -46,7 +50,7 @@ def main():
         pmts.append(pmt)
         run = doc['run_number']
 
-        mdomdir = mdom
+        mdomdir = output_dir+mdom
         if not os.path.exists(mdomdir):
             os.makedirs(mdomdir)
         filename = (mdomdir+'/{0}_{1}_{2}.json'.format(mdom, pmt, run))
