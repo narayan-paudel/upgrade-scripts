@@ -27,6 +27,8 @@ for idom in degg_list[:]:
     print(f"reading {idom} dom")
     subprocess.call(f"python get_degg_transit_times.py {idom}",shell=True)
 
+DEggs_pass_list = []
+
 # folder_list = sorted(glob.glob(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/*"))
 folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/") if f.is_dir()]
 folder_list = [ifolder.split("/")[-1] for ifolder in folder_list]
