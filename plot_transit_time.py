@@ -29,6 +29,9 @@ colorsCustom2 = colorsCustom + colorsCustom
 colorsIter = iter(colorsCustom)
 colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']
 
+R5912_100_tt = 54#ns
+R5912_100_tts = 1.01918616#ns
+
 def extract_histogram(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
@@ -129,104 +132,113 @@ def plot_temp(temp_list):
     plt.savefig(plotFolder+f"/../transit_time_temp.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
-def plot_mu(mu_list):
+def plot_mu(mu_list,temp_limits):
+    shift = False
+    if shift == True:
+        mu_list = [imu-12 for imu in mu_list]
     print(f"min {min(mu_list)}max{max(mu_list)}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
     bins = np.linspace(int(min(mu_list)-1),int(max(mu_list)+1),int((max(mu_list)-min(mu_list))/6)+1)
-    ax.hist(mu_list,bins=bins,histtype="step",color="orange",lw=2.5,alpha=1)
+    # bins = np.linspace(50, 70,41)
+    ax.hist(mu_list,bins=bins,histtype="step",color="orange",label=f"Chiba",linewidth=2.5,alpha=1)
+    ax.axvline(x=R5912_100_tt, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tt:.0f} ns",linewidth=2.5,alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"transit time peaks $\mu$ [ns]", fontsize=22)
+    ax.set_xlabel(r"PMT Time - Tabletop Time $\mu$ [ns]", fontsize=22)
+    ax.set_ylabel("count", fontsize=22)
+    # ax.set_xlim(0,100)
+    # ax.set_ylim(0.9,5*10**3)
+    # ax.set_yscale("log")
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=14)
+    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
+    plt.savefig(plotFolder+f"/../transit_time_means{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../transit_time_means{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_sigma(sigma_list,temp_limits):
+    print(f"min {min(sigma_list)}max{max(sigma_list)}")
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    # bins = np.linspace(int(min(sigma_list)-1),int(max(sigma_list)+1),int((max(sigma_list)-min(sigma_list)))+1)
+    bins = np.linspace(0,5,51)
+    ax.hist(sigma_list,bins=bins,histtype="step",color="orange",label=f"Chiba",linewidth=2.5,alpha=1)
+    ax.axvline(x=R5912_100_tts, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tts:.1f} ns",linewidth=2.5,alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r"PMT Time - Tabletop Time $\sigma $ [ns]", fontsize=22)
+    ax.set_ylabel("count", fontsize=22)
+    # ax.set_xlim(0,100)
+    # ax.set_ylim(0.9,5*10**3)
+    # ax.set_yscale("log")
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=14)
+    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
+    plt.savefig(plotFolder+f"/../transit_time_sigma{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../transit_time_sigma{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_chi2(chi2_list,temp_limits):
+    print(f"min {min(chi2_list)}max{max(chi2_list)}")
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    bins = np.linspace(int(min(chi2_list)-1),int(max(chi2_list)+1),int((max(chi2_list)-min(chi2_list))/12)+1)
+    ax.hist(chi2_list,bins=bins,histtype="step",color="orange",lw=2.5,alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r" $\chi^{2} $", fontsize=22)
     ax.set_ylabel("count", fontsize=22)
     # ax.set_xlim(0,100)
     # ax.set_ylim(0.9,5*10**3)
     # ax.set_yscale("log")
     ax.grid(True,alpha=0.6)
     # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_means.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_means.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-
-def plot_sigma(sigma_list):
-    print(f"min {min(sigma_list)}max{max(sigma_list)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    bins = np.linspace(int(min(sigma_list)-1),int(max(sigma_list)+1),int((max(sigma_list)-min(sigma_list)))+1)
-    ax.hist(sigma_list,bins=bins,histtype="step",color="orange",lw=2.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"transit time width $\sigma $ [ns]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_sigma.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_sigma.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-
-def plot_chi2(chi2_list):
-    print(f"min {min(chi2_list)}max{max(chi2_list)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    bins = np.linspace(int(min(chi2_list)-1),int(max(chi2_list)+1),int((max(chi2_list)-min(chi2_list)))+1)
-    ax.hist(chi2_list,bins=bins,histtype="step",color="orange",lw=2.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r" $\chi^{2} $ [ns]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../chi2_dist.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../chi2_dist.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_dist{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_dist{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
 
 
-def plot_chi2Sigma(chi2_list,sigma_list):
+def plot_chi2Sigma(chi2_list,sigma_list,temp_limits):
     print(f"min {min(chi2_list)}max{max(chi2_list)}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
     ax.plot(chi2_list,sigma_list,"o")
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r" $\chi^{2} $ [ns]", fontsize=22)
-    ax.set_ylabel(r"$\sigma$", fontsize=22)
+    ax.set_xlabel(r" $\chi^{2} $", fontsize=22)
+    ax.set_ylabel(r"$\sigma$ [ns]", fontsize=22)
     # ax.set_xlim(0,100)
     # ax.set_ylim(0.9,5*10**3)
     # ax.set_yscale("log")
     ax.grid(True,alpha=0.6)
     # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../chi2_sigma.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../chi2_sigma.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_sigma{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_sigma{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
-def plot_chi2mu(chi2_list,mu_list):
+def plot_chi2mu(chi2_list,mu_list,temp_limits):
     print(f"min {min(chi2_list)}max{max(chi2_list)}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
     ax.plot(chi2_list,mu_list,"o")
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r" $\chi^{2} $ [ns]", fontsize=22)
-    ax.set_ylabel(r"$\mu$", fontsize=22)
+    ax.set_xlabel(r" $\chi^{2} $", fontsize=22)
+    ax.set_ylabel(r"$\mu$ [ns]", fontsize=22)
     # ax.set_xlim(0,100)
     # ax.set_ylim(0.9,5*10**3)
     # ax.set_yscale("log")
     ax.grid(True,alpha=0.6)
     # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../chi2_mu.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../chi2_mu.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_mu{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../chi2_mu{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
 
 
-def transit_params(degg_list):
+def transit_params(degg_list,temp_limits):
     file_list = []
     for idegg in degg_list:
         ifiles = sorted(glob.glob(idegg+"/DEgg*"))
@@ -240,6 +252,10 @@ def transit_params(degg_list):
     doms_with_temp = []
     for ifile in file_list:
         a,mu,sigma,chi2,pvalue = extract_fit_params(ifile)
+        if sigma > 40:
+            print(f"sigma {sigma} in {ifile}")
+
+
         itemp = extract_temperature(ifile)
         idevice,isubdevice = extract_device(ifile)
         if itemp < -10:
@@ -250,23 +266,25 @@ def transit_params(degg_list):
         #     print(ifile,itemp)
         # print(chi2,pvalue)
         # chi2,pvalue  = get_chi2(ifile)
-        if mu > -500 and sigma < 500:
+        if mu > -500 and sigma < 45 and temp_limits[0]<=itemp<temp_limits[1]:
             mu_list.append(mu)
             sigma_list.append(sigma)
             chi2_list.append(chi2)
             a_list.append(a)
             temp_list.append(itemp)
-        else:
-            print(f"please check {ifile}")
+            # if chi2 < 200:
+            #     print(f"chi2 {chi2} in {ifile}")
+        # else:
+        #     print(f"please check {ifile}")
     # print(mu_list)
-    doms_with_temp = [idom.split('_')[-1] for idom in doms_with_temp]
-    print(f"dom number {len(list(set(doms_with_temp)))}")
-    print(list(set(doms_with_temp)))
-    plot_mu(mu_list)
-    plot_sigma(sigma_list)
-    plot_chi2(chi2_list)
-    plot_chi2mu(chi2_list,mu_list)
-    plot_chi2Sigma(chi2_list,sigma_list)
+    # doms_with_temp = [idom.split('_')[-1] for idom in doms_with_temp]
+    # print(f"dom number {len(list(set(doms_with_temp)))}")
+    # print(list(set(doms_with_temp)))
+    plot_mu(mu_list,temp_limits)
+    plot_sigma(sigma_list,temp_limits)
+    plot_chi2(chi2_list,temp_limits)
+    plot_chi2mu(chi2_list,mu_list,temp_limits)
+    plot_chi2Sigma(chi2_list,sigma_list,temp_limits)
     plot_temp(temp_list)
     return a_list,mu_list,sigma_list
 
@@ -281,9 +299,9 @@ def count_DOM_PMTs(degg_list):
             print(f"{idegg} has {len(ifiles)} DOM measurements")
             print(ifiles)
 
-count_DOM_PMTs(degg_list)
+# count_DOM_PMTs(degg_list)
 
-# transit_params(degg_list)
+transit_params(degg_list,[-30,-10])
     
     
 # make_transit_plots(degg_list)
