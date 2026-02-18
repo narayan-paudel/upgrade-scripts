@@ -41,8 +41,10 @@ def main():
                                             'meas_name': 'pmt-timing-resolution-info'}))
     
     print('{0} measurements found'.format(len(docs)))
+    no_measurements = []
+    
     if len(docs)==0:
-        print(args.uid)
+        print(f"no measurement found for {args.uid}")
 
     pmts = []
     for n, doc in enumerate(docs):

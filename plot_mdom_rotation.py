@@ -22,6 +22,8 @@ plt.rcParams.update({'font.size': 10})
 
 plotFolder = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_rotation/"
 
+colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']
+
 mdom = "mDOM_M016_v1"
 runs = {"PMT 8 North":776,"PMT 7 North": 777,"PMT 6 North": 778, "PMT 5 North": 779, "PMT 4 North": 780, "PMT 3 North": 781, "PMT 2 North": 782, "PMT 1 North": 783}
 filemap = {}
@@ -51,29 +53,163 @@ def extract_magnetometer_data(json_file):
     return mag_x, mag_y, mag_z,times
 
 x_mean_list = []
+x_allrun_list = []
 y_mean_list = []
+y_allrun_list = []
 z_mean_list = []
+z_allrun_list = []
+
+r_mean_list = []
+r_allrun_list = []
+theta_mean_list = []
+theta_allrun_list = []
+phi_mean_list = []
+phi_allrun_list = []
+
+
+
+times_allrun_list = []
 
 def plot_magnetometer_xyz(mag_x, mag_y, mag_z, times, run):
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
     ax = fig.add_subplot(gs[0,0])
     times_sec = [(itime - times[0]) for itime in times]
-    ax.plot(times_sec, mag_x, "-o", c="r", label=f"${'B_x'}$", alpha=1)
-    ax.plot(times_sec, mag_y, "-o", c="g", label=f"${'B_y'}$", alpha=1)
-    ax.plot(times_sec, mag_z, "-o", c="b", label=f"${'B_z'}$", alpha=1)
+    ax.plot(times_sec, np.asarray(mag_x)*10**6, "-o", c=colorsCustom[0], label=f"${'B_x'}$", alpha=1)
+    ax.plot(times_sec, np.asarray(mag_y)*10**6, "-o", c=colorsCustom[1], label=f"${'B_y'}$", alpha=1)
+    ax.plot(times_sec, np.asarray(mag_z)*10**6, "-o", c=colorsCustom[2], label=f"${'B_z'}$", alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=16)
-    ax.set_xlabel(r" $B_x$ [$\mu$T]", fontsize=20)
-    ax.set_ylabel(r" $B_y$ [$\mu$T]", fontsize=20)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $B_i$ [$\mu$T]", fontsize=20)
+    ax.set_ylim(-80, 50)
     plt.savefig(plotFolder+f"/magnetometer_xyz_{run}.png",transparent=False,bbox_inches='tight')
     plt.savefig(plotFolder+f"/magnetometer_xyz_{run}.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
+
+def plot_magnetometer_B(mag_x, mag_y, mag_z, times, run):
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0])
+    times_sec = [(itime - times[0]) for itime in times]
+    ax.plot(times_sec, np.sqrt(np.asarray(mag_x)**2+np.asarray(mag_y)**2+np.asarray(mag_z)**2)*10**6, "-o", c=colorsCustom[0], label=f"${'B_x'}$", alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=16)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $B_i$ [$\mu$T]", fontsize=20)
+    # ax.set_ylim(-35, 30)
+    plt.savefig(plotFolder+f"/magnetometer_B_{run}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/magnetometer_B_{run}.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_magnetometer_r(r, times, run):
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0])
+    times_sec = [(itime - times[0]) for itime in times]
+    ax.plot(times_sec, np.asarray(r)*10**6, "-o", c=colorsCustom[0], label=f"${'B_r'}$", alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=16)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $B_i$ [$\mu$T]", fontsize=20)
+    ax.set_ylim(0, 90)
+    plt.savefig(plotFolder+f"/magnetometer_r_{run}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/magnetometer_r_{run}.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+B_NTS = 53.06 #muT
+inclination_NTS = 90 + 68.87 #degrees Down
+declination_NTS = 90 - (-6.58) #degrees -West (+ve would be east)
+
+
+def plot_magnetometer_r(r, times, run):
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0])
+    times_sec = [(itime - times[0]) for itime in times]
+    ax.plot(times_sec, np.asarray(r)*10**6, "-o", c=colorsCustom[0], label=f"${'B'}$", alpha=1)
+    ax.axhline(B_NTS,0,1,ls="--",lw=2.5,label=f"B$_{{geo}}$ ({B_NTS:.1f} ${{\mu}}$T)",alpha=1.0)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=16)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $B$ [$\mu$T]", fontsize=20)
+    ax.set_ylim(0, 90)
+    plt.savefig(plotFolder+f"/magnetometer_r_{run}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/magnetometer_r_{run}.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_magnetometer_theta(theta, times, run):
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0])
+    times_sec = [(itime - times[0]) for itime in times]
+    ax.plot(times_sec, np.rad2deg(np.asarray(theta)), "-o", c=colorsCustom[0], label=f"${'Theta'}$", alpha=1)
+    ax.axhline(inclination_NTS,0,1,ls="--",lw=2.5,label=f"$\delta$ ({inclination_NTS:.1f}\u00b0)",alpha=1.0)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=16)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $\theta$ [deg]", fontsize=20)
+    ax.set_ylim(0, 180)
+    plt.savefig(plotFolder+f"/magnetometer_theta_{run}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/magnetometer_theta_{run}.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+def plot_magnetometer_phi(phi, times, run):
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0])
+    times_sec = [(itime - times[0]) for itime in times]
+    ax.plot(times_sec, np.rad2deg(np.asarray(phi)), "-o", c=colorsCustom[0], label=f"${'Phi'}$", alpha=1)
+    # ax.axhline(declination_NTS,0,1,ls="--",lw=2.5,label=f"$I$ ({declination_NTS:.1f}\u00b0)",alpha=1.0)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=20)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=16)
+    ax.set_xlabel(r" $time$ [s]", fontsize=20)
+    ax.set_ylabel(r" $\phi$ [deg]", fontsize=20)
+    ax.set_ylim(-180, 180)
+    plt.savefig(plotFolder+f"/magnetometer_phi_{run}.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/magnetometer_phi_{run}.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def to_spherical(x,y,z):
+    '''
+    converts cartesian coordinates (x,y,z) to spherical (r,theta,phi)
+    '''
+    r = np.sqrt(x*x+y*y+z*z)
+    theta = np.arctan2(np.sqrt(x*x + y*y),z)
+    phi = np.arctan2(y,x)
+    return r,theta,phi
+
+def spherical_lists(x_list,y_list,z_list):
+    r_list = []
+    θ_list = []
+    φ_list = []
+    for x,y,z in zip(x_list,y_list,z_list):
+        r,theta,phi = to_spherical(x,y,z)
+        r_list.append(r)
+        θ_list.append(theta)
+        φ_list.append(phi)
+    return r_list,θ_list,φ_list
+
 for run, json_file in filemap.items():
     mag_x, mag_y, mag_z,times = extract_magnetometer_data(json_file)
+    r,theta,phi = spherical_lists(mag_x, mag_y, mag_z)
     plot_magnetometer_xyz(mag_x, mag_y, mag_z,times, run)
+    # plot_magnetometer_r(r, times, run)
+    # plot_magnetometer_theta(theta, times, run)
+    # plot_magnetometer_phi(phi, times, run)
+    x_allrun_list.extend(mag_x)
+    y_allrun_list.extend(mag_y)
+    z_allrun_list.extend(mag_z)
+    r_allrun_list.extend(r)
+    theta_allrun_list.extend(theta)
+    phi_allrun_list.extend(phi)
+    times_allrun_list.extend(times)
     print(f"Run {run}:")
     print(f"  mag x: {np.mean(mag_x)}")
     print(f"  mag y: {np.mean(mag_y)}")
@@ -81,6 +217,15 @@ for run, json_file in filemap.items():
     x_mean_list.append(np.mean(mag_x))
     y_mean_list.append(np.mean(mag_y))
     z_mean_list.append(np.mean(mag_z))
+    r_mean_list.append(np.mean(r))
+    theta_mean_list.append(np.mean(theta))
+    phi_mean_list.append(np.mean(phi))
+
+plot_magnetometer_xyz(x_allrun_list, y_allrun_list, z_allrun_list, times_allrun_list, run="allruns")
+plot_magnetometer_B(x_allrun_list, y_allrun_list, z_allrun_list, times_allrun_list, run="allruns")
+plot_magnetometer_r(r_allrun_list, times_allrun_list, run="allruns")
+plot_magnetometer_theta(theta_allrun_list, times_allrun_list, run="allruns")
+plot_magnetometer_phi(phi_allrun_list, times_allrun_list, run="allruns")
 
 
 print(f"length of x_mean_list: {len(x_mean_list)}")
@@ -164,8 +309,13 @@ def circle_from_ellipse(x,y,w):
     y_circ.append(iy_circ)
   return x_circ,y_circ
 
+
+# utah_ellipse_params = [-0.00119216, 0.00016461, -0.00135584, 0.07516923, -0.03476016] #if using scaled values 10**6
+utah_ellipse_params = [-1.19216116e+09,  1.64605814e+08, -1.35583796e+09,  7.51692271e+04, -3.47601605e+04]
+
 def corrected_ellipse(x,y):
   w = fit_ellipse(x,y)
+#   w = utah_ellipse_params
   x_circ,y_circ = circle_from_ellipse(x,y,w)
   return x_circ,y_circ
 
@@ -254,7 +404,42 @@ def plot_xy_360(mag_x, mag_y):
     plt.close()
 
 
-plot_xy_360(x_mean_list[:5], y_mean_list[:5])
+# plot_xy_360(x_mean_list[:5], y_mean_list[:5]) #removing weird ponts for partial fits
+plot_xy_360(x_mean_list[:], y_mean_list[:])
+
+def plot_xyz_360(mag_x, mag_y, mag_z):
+    loop_mag_x = mag_x
+    loop_mag_y = mag_y
+    loop_mag_z = mag_z
+    # loop_mag_x.append(mag_x[0])
+    # loop_mag_y.append(mag_y[0])
+    loop_mag_x = np.array(loop_mag_x)*10**6 #convert to microTesla
+    loop_mag_y = np.array(loop_mag_y)*10**6 #convert to microTesla
+    loop_mag_z = np.array(loop_mag_z)*10**6 #convert to microTesla
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1, figure=fig)
+    ax = fig.add_subplot(gs[0,0],projection='3d')
+    ax.plot(loop_mag_x[:], loop_mag_y[:], loop_mag_z[:], "-o", c="b", label=f"{""}", alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=12)
+    for pmt,bx,by,bz in zip(PMT_labels,loop_mag_x,loop_mag_y,loop_mag_z):
+        ax.text(bx, by, bz, f"{pmt}", fontsize=10, ha='right', va='bottom')
+    ax.grid(True,alpha=0.6)
+    ax.set_aspect('equal')
+    # ax.legend(loc="lower left",ncols=1,fontsize=16)
+    # ax.set_yticks(np.linspace(0,360,37))
+    ax.set_xlabel(r" $B_x$ [$\mu$T]", fontsize=12)
+    ax.set_ylabel(r" $B_y$ [$\mu$T]", fontsize=12)
+    ax.set_zlabel(r" $B_z$ [$\mu$T]", fontsize=12)
+    plt.savefig(plotFolder+f"/orientation_with_{mdom}xyz.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/orientation_with_{mdom}xyz.pdf",transparent=False,bbox_inches='tight')
+    plt.show()
+    # plt.close()
+
+
+plot_xyz_360(x_mean_list[:], y_mean_list[:], z_mean_list[:])
+
+
+
 
 
 def plot_xy_calibrated(mag_x, mag_y):

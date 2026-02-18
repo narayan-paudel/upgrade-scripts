@@ -23,7 +23,14 @@ with open(args.input,"r") as fh:
     degg_list = json.load(fh)
 
 # print(degg_list)
+degg_exclude_list = ["DEgg2020-1-015_v2","DEgg2020-2-017_v1","DEgg2020-2-021_v1",
+                     "DEgg2020-2-062_v1","DEgg2020-2-064_v1","DEgg2020-2-066_v1",
+                     "DEgg2020-2-067_v1","DEgg2020-2-068_v1","DEgg2020-2-069_v1",
+                     "DEgg2020-2-072_v1","DEgg2020-2-074_v1","DEgg2020-2-075_v1"]
+
 for idom in degg_list[:]:
+    if idom in degg_exclude_list:
+        continue
     print(f"reading {idom} dom")
     subprocess.call(f"python get_degg_transit_times.py {idom}",shell=True)
 

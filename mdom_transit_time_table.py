@@ -33,18 +33,9 @@ for ifile in mdom_list:
     else:
         mdom_list_desy.append(ifile)
 
-# mdom_list_desy = [ifile for ifile in mdom_list if ifile.split("/")[-1].split("_")[1][0]=="D" and not "DVT" in ifile.split("/")[-1].split("_")[1]]
-# mdom_list_desy_dvt = [ifile for ifile in mdom_list if "DVT" in ifile.split("/")[-1].split("_")[1]]
-# # mdom_list_desy_dvt = [ifile for ifile in mdom_list if ifile.split("/")[-1].split("_")[1][0]=="D" and ifile.split("/")[-1].split("_")[1][1]=="V"]
-# # test = [ifile.split("/")[-1].split("_")[1] for ifile in mdom_list_desy_dvt]
-# # print(test)
-# print(mdom_list_desy[:5])
-# print(mdom_list_desy_dvt[0] in mdom_list_desy)
-# print(mdom_list_msu)
-# print(mdom_list_desy_dvt)
+
 mdom_names = [istr.split("/")[-1] for istr in mdom_list]
-# print(f"found {len(mdom_names)} mdoms in fatcat")
-# print(mdom_names)
+
 
 
 from customColors import qualitative_colors
@@ -86,6 +77,21 @@ def extract_histogram(json_file):
     # fit_x_values = np.linspace(x_min,x_max,n_bins)
     # fit_y_values = data["meas_data"][0]["fit_y_values"]
     return x_values,y_values,x_label,device_uid,pmt,channel,run,temperature,meas_time,
+
+
+def extract_channel(json_file):
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+
+    channel_dict = {"mb channel":np.nan}
+    device_uid = data["device_uid"]
+    pmt = data['subdevice_uid'].split('_')[-1]
+    channel = data["meas_data"][2]["value"]
+    channel_dict["mb channel"] = channel
+    for j,ielt in enumerate(data["meas_data"][1:]):
+        channel_dict[ielt["label"]] = ielt["value"]
+    return channel_dict["mb channel"]
+ 
 
 def extract_temperature(json_file):
     with open(json_file, 'r') as f:
@@ -397,263 +403,84 @@ def transit_params(mdom_list,meas_site):
     plot_hv(hv_list,meas_site)
     return a_list,mu_list,sigma_list
 
-def extract_params(mdom_list,meas_site):
+def extract_transit_time(mdom_list):
     '''
     gets mean and variance from json file in the given list of files.
     '''
-    file_list = []
+    mdom_dict = {}
     for imdom in mdom_list[:]:
+        mdom_name = imdom.split("/")[-1]
+        mdom_name = mdom_name.split("_")[0]+"_"+mdom_name.split("_")[1]
         ifiles = sorted(glob.glob(imdom+"/m*_pmt_*.json"))
-        file_list += ifiles
-    a_list = []
-    b_list = []
-    c_list = []
-    mu_list = []
-    sigma_list = []
-    chi2_list = []
-    pvalue_list = []
-    zero_mu_files = []
-    files_at_site = []
-    temp_list = []
-    for ifile in file_list:
-        # print(f"running {ifile}")
-        if check_meas_site(ifile) == meas_site:
-            files_at_site.append(ifile)
-        else:
-            print(f"This file has mesurement from {check_meas_site(ifile)} instead of {meas_site}")
-    for ifile in files_at_site:
-            print(f"running {ifile}")
-            mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
-            itemp = extract_temperature(ifile)
-            if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
-                and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
-                mu_list.append(mu)
-                sigma_list.append(sigma)
-                chi2_list.append(chi2)
-                a_list.append(a)
-                b_list.append(b)
-                c_list.append(c)
-                temp_list.append(itemp)
-                # if c!=sigma:
-                #     print(f"{c}c and {sigma}")
-            elif abs(mu-0.0)< 0.001 or abs(sigma-0.0)<0.001:
-                zero_mu_files.append(ifile)
-            else:
-                print(f"please check {ifile}. It has {mu} transit time and {sigma} spread")
-    return mu_list,sigma_list
+        PMT_list = [re.search(r"(DM\d+)", ifilename).group(1) for ifilename in ifiles]
+        PMT_list = list(set(PMT_list))
+        # print(f"pmt list   {len(PMT_list)} {PMT_list}")
+        pmt_dict = {}
+        for ipmt in PMT_list:
+            # pmt_dict = {}
+            ifiles_this_pmt = sorted(glob.glob(imdom+f"/m*_pmt_{ipmt}*.json"))
+            # print(f"files for {ipmt} {len(ifiles_this_pmt)}")
+            mu_list = []
+            sigma_list = []
+            for ifile in ifiles_this_pmt:
+                mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
+                itemp = extract_temperature(ifile)
+                channel = extract_channel(ifile)
+                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
+                #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
+                if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
+                    mu_list.append(mu)
+                    sigma_list.append(sigma)
+            if len(mu_list)>0:
+                if len(mu_list)==1:
+                    tt = mu_list[0]
+                    best_mu = tt
+                else:
+                    tt = min(mu_list, key=lambda x: abs(x - R12199_tt))
+                    # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements with mean {tt:.1f} and std {np.std(mu_list):.1f}")
+            best_mu = np.median(mu_list)
+            # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements")
+            # print(f"mDOM {mdom_name} pmt {ipmt} channel {channel} has mean transit time {tt:.1f} and {mu_list}")
+            pmt_dict[f"channel_{channel}"] = best_mu
+        mdom_dict[mdom_name] = pmt_dict
+    return mdom_dict
 
 
-def combined_single_mean_plot(mdom_list_desy,mdom_list_msu):
-    tt_desy,tts_desy = extract_params(mdom_list_desy,"desy")
-    tt_msu,tts_msu = extract_params(mdom_list_msu,"msu")
-    tt_both = tt_desy + tt_msu
-    print(f"desy tt min {min(tt_desy)} max{max(tt_desy)}")
-    print(f"desy tts min {min(tts_desy)} max{max(tts_desy)}")
+            
 
-    print(f"msu tt min {min(tt_msu)} max{max(tt_msu)}")
-    print(f"msu tts min {min(tts_msu)} max{max(tts_msu)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    # bins = np.linspace(int(min(mu_list)-1),int(max(mu_list)+1),int((max(mu_list)-min(mu_list))/6)+1)
-    # bins = np.linspace(0,100,401)
-    c1="#1C5E7D"#"#2b8cbe"
-    c2="#4DC9CB"#"#c34a36"
-    bins = np.linspace(-400,1100,3001)#full
-    # bins = np.linspace(35,55,41)#zoom
-    bins = np.linspace(0,55,111)#zoom
-    ax.hist(tt_desy,bins=bins,histtype="step",color=c1,label=r"DESY",linewidth=2.5,alpha=1)
-    ax.hist(tt_msu,bins=bins,histtype="step",color=c2,label="MSU",linewidth=2.5,alpha=1)
-    ax.hist(tt_both,bins=bins,histtype="step",color="black",label="Both",linewidth=2.5,alpha=1)
-    ax.axvline(x=R12199_tt, ymin=0, ymax=1,ls="--",color="gray",label=f"{R12199_tt:.0f} ns",linewidth=2.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"transit time peaks $\mu$ [ns]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    ax.text(0.02, 0.60, f"MSU tt: {np.mean(tt_msu):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c2)
-    ax.text(0.02, 0.55, f"DESY tt: {np.mean(tt_desy):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c1)
-    ax.text(0.02, 0.50, f"combined tt: {np.mean(tt_both):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color="black")
-    # ax.text(0.02, 0.60, f"MSU tt: {np.mean(tt_msu):.0f} ± {np.std(tt_msu):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c2)
-    # ax.text(0.02, 0.55, f"DESY tt: {np.mean(tt_desy):.0f} ± {np.std(tt_desy):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c1)
-    # ax.text(0.02, 0.50, f"combined tt: {np.mean(tt_both):.0f} ± {np.std(tt_both):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color="black")
-    
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    ax.legend(loc="upper left",fontsize=14)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_meansmDOM_combined_single.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_meansmDOM_combined_single.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
 
-def combined_mean_plot(mdom_list_desy,mdom_list_msu):
-    tt_desy,tts_desy = extract_params(mdom_list_desy,"desy")
-    tt_msu,tts_msu = extract_params(mdom_list_msu,"msu")
-    print(f"desy tt min {min(tt_desy)} max{max(tt_desy)}")
-    print(f"desy tts min {min(tts_desy)} max{max(tts_desy)}")
-
-    print(f"msu tt min {min(tt_msu)} max{max(tt_msu)}")
-    print(f"msu tts min {min(tts_msu)} max{max(tts_msu)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    # bins = np.linspace(int(min(mu_list)-1),int(max(mu_list)+1),int((max(mu_list)-min(mu_list))/6)+1)
-    # bins = np.linspace(0,100,401)
-    c1="#1C5E7D"#"#2b8cbe"
-    c2="#4DC9CB"#"#c34a36"
-    bins = np.linspace(-400,1100,3001)#full
-    # bins = np.linspace(35,55,41)#zoom
-    bins = np.linspace(0,55,111)#zoom
-
-    ax.hist(tt_desy,bins=bins,histtype="step",color=c1,label=r"DESY",linewidth=2.5,alpha=1)
-    ax.hist(tt_msu,bins=bins,histtype="step",color=c2,label="MSU",linewidth=2.5,alpha=1)
-    ax.axvline(x=R12199_tt, ymin=0, ymax=1,ls="--",color="gray",label=f"{R12199_tt:.0f} ns",linewidth=2.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"transit time peaks $\mu$ [ns]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    ax.text(0.05, 0.65, f"MSU tt: {np.mean(tt_msu):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c2)
-    ax.text(0.05, 0.55, f"DESY tt: {np.mean(tt_desy):.0f} ns", horizontalalignment='left', verticalalignment='top', transform=ax.transAxes, fontsize=14, color=c1)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    ax.legend(loc="upper left",fontsize=14)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_meansmDOM_combined.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_meansmDOM_combined.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-    
-def combined_spread_plot(mdom_list_desy,mdom_list_msu):
-    tt_desy,tts_desy = extract_params(mdom_list_desy,"desy")
-    tt_msu,tts_msu = extract_params(mdom_list_msu,"msu")
-    print(f"desy tt min {min(tt_desy)} max{max(tt_desy)}")
-    print(f"desy tts min {min(tts_desy)} max{max(tts_desy)}")
-    print(f"msu tt min {min(tt_msu)} max{max(tt_msu)}")
-    print(f"msu tts min {min(tts_msu)} max{max(tts_msu)}")
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    c1="#1C5E7D"#"#2b8cbe"
-    c2="#4DC9CB"#"#c34a36"
-    bins = np.linspace(0,400,801)
-    bins = np.linspace(0,10,101)#zoom
-    ax.hist(tts_desy,bins=bins,histtype="step",color=c1,linewidth=2.5,label="DESY",alpha=1)
-    ax.hist(tts_msu,bins=bins,histtype="step",color=c2,linewidth=2.5,label="MSU",alpha=1)
-    ax.axvline(x=R15458_02_tts, ymin=0, ymax=1,ls="--",color="gray",label=f"{R15458_02_tts:.1f} ns",linewidth=2.5,alpha=1)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"transit time width $\sigma $ [ns]", fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    ax.legend(fontsize=14)
-    # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_sigmamDOM_combined.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_sigmamDOM_combined.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-    
+def get_transit_time_dict(mdom_list):
+    mdom_dict = extract_transit_time(mdom_list)
+    # print(mdom_dict)
+    mDOMs = sorted(mdom_dict.keys())
+    # print(mDOMs)
+    channels = [f"channel_{i}" for i in range(0,24)]
+    # print(channels)
+    ordered_mdom_dict = {mdom: {channel: mdom_dict[mdom].get(channel, np.nan) for channel in channels} for mdom in mDOMs}
+    # print(ordered_mdom_dict)
+    with open('/Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json', 'w') as f:
+        json.dump(ordered_mdom_dict, f, indent=4)
 
 
 combined_mdom_list = mdom_list_msu + mdom_list_desy
-combined_mean_plot(mdom_list_desy,mdom_list_msu)
-combined_single_mean_plot(mdom_list_desy,mdom_list_msu)
-# combined_spread_plot(mdom_list_desy,mdom_list_msu)
+# combined_mean_plot(mdom_list_desy,mdom_list_msu)
+get_transit_time_dict(combined_mdom_list)
 
 
+def inspect_transit_time(transit_time_file):
+    with open(transit_time_file, 'r') as f:
+        data = json.load(f)
+        flat_mDOM = []
+        for mdom, channels in data.items():
+            for channel, value in channels.items():
+                if np.isnan(value):
+                    print(f"mDOM {mdom} channel  {channel} value {value}")
+                elif int(value) == 0:
+                    flat_mDOM.append(mdom)
+                elif value < 25 or value > 60:
+                    print(f"mDOM {mdom} channel  {channel} value {value}")
 
+        flat_mDOM = list(set(flat_mDOM))
+        print(f"mDOMs with zero transit time {len(flat_mDOM)} {flat_mDOM}")
 
-
-# transit_params(mdom_list,meas_site="desy")
-# transit_params(mdom_list,meas_site="msu")
-    
-M052 = [imdom for imdom in mdom_list if "M052" in imdom]
-print(M052)   
-# make_transit_plots(mdom_list[:1])
-# make_transit_plots(M052)
-mDOM_id = "M052"
-mDOM_dir = [imdom for imdom in mdom_list if mDOM_id in imdom][0]
-print(f"mDOM dir {mDOM_dir}")
-mDOM_filelists = glob.glob(mDOM_dir + "/*.json")
-PMT_list = [re.search(r"(DM\d+)", ifilename).group(1) for ifilename in mDOM_filelists]
-
-
-PMT_list = list(set(PMT_list))
-
-PMT = "DM04224"
-PMT_filelists = [ifilename for ifilename in mDOM_filelists if PMT in ifilename]
-print(PMT_filelists)
-
-
-#plot transit time for M052
-def mdom_transit_plot_M052(file_list):
-    n_files = len(file_list)
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    for i,ifile in enumerate(file_list):
-        print(f"no of file {i} {ifile}")
-        x_values,y_values,x_label,device_uid,pmt,channel,run,temperature,meas_time = extract_histogram(ifile)
-        mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
-        temp = extract_temperature(ifile)
-        hv = extract_HV(ifile)
-        popt = gaussian_fit(x_values,y_values)
-        # print(f"popt {popt}")
-        if sigma < 20:
-            ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom64[i],label=f" tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C Run {run}",alpha=1)
-        # ax.plot(fit_x_values,fit_y_values,ls='--',lw = 2.5,c=colorsCustom2[i],alpha=0.5)
-    ax.text(0.75, 0.95-(i*0.05), f"{device_uid}\nPMT {str(pmt)} ch {channel} ",transform=ax.transAxes, ha='left', fontsize=10)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"{}".format(x_label), fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.00),loc="lower center")
-    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}mDOM{channel}.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}mDOM{channel}.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-
-# mdom_transit_plot_M052(PMT_filelists,PMT="DM04224")
-for ipmt in PMT_list:
-    PMT_filelists = [ifilename for ifilename in mDOM_filelists if ipmt in ifilename]
-    print(f"plotting for PMT {ipmt} with {len(PMT_filelists)} files")
-    mdom_transit_plot_M052(PMT_filelists)
-
-def mdom_transit_M052_run(file_list,run_number):
-    color_map = {"3":"#1e77b3","9":"#ff7f0f","15":"#d72828","21":"#9367bc"}
-    n_files = len(file_list)
-    fig = plt.figure(figsize=(8,5))
-    gs = gridspec.GridSpec(nrows=1,ncols=1)
-    ax = fig.add_subplot(gs[0])
-    ncolor = 0
-    for i,ifile in enumerate(file_list):
-        print(f"no of file {i} {ifile}")
-        x_values,y_values,x_label,device_uid,pmt,channel,run,temperature,meas_time = extract_histogram(ifile)
-        mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
-        temp = extract_temperature(ifile)
-        hv = extract_HV(ifile)
-        popt = gaussian_fit(x_values,y_values)
-        # print(f"popt {popt}")
-        if sigma < 20 and run== run_number and channel in [3,9,15,21]:
-            ax.step(x_values,y_values,ls='-',lw = 2.5,c=color_map[str(channel)],label=f"ch {channel} tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C",alpha=0.7)
-            ncolor += 1
-            # ax.step(x_values,y_values,ls='-',lw = 2.5,label=f"ch {channel} tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C Run {run}",alpha=1)
-        # ax.plot(fit_x_values,fit_y_values,ls='--',lw = 2.5,c=colorsCustom2[i],alpha=0.5)
-    ax.text(0.75, 0.95-(0.05), f"{device_uid}\n run {run_number} ",transform=ax.transAxes, ha='left', fontsize=10)
-    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.set_xlabel(r"{}".format(x_label), fontsize=22)
-    ax.set_ylabel("count", fontsize=22)
-    # ax.set_xlim(0,100)
-    # ax.set_ylim(0.9,5*10**3)
-    # ax.set_yscale("log")
-    ax.grid(True,alpha=0.6)
-    ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.00),loc="lower center")
-    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}Run{run_number}.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/mDOM_transit_time{device_uid}Run{run_number}.pdf",transparent=False,bbox_inches='tight')
-    plt.close()
-mdom_transit_M052_run(mDOM_filelists,run_number=782)
+inspect_transit_time(plotFolder+'/../mdom_transit_time.json')

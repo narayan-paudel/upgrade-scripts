@@ -112,14 +112,14 @@ def extract_fit_params(json_file):
     fit_params = data["meas_data"][0]["fit_params"]
     return *fit_params,chi2,pvalue
 
-def plot_temp(temp_list):
+def plot_temp(temp_list,temp_limits):
     print(f"min {min(temp_list)}max{max(temp_list)}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
     # bins = np.linspace(int(min(temp_list)-1),int(max(temp_list)+1),int((max(temp_list)-min(temp_list))/0.5)+1)
     bins = np.linspace(-30,40,141)
-    ax.hist(temp_list,bins=bins,histtype="step",color="orange",lw=4.5,alpha=1)
+    ax.hist(temp_list,bins=bins,histtype="step",color="orange",linewidth=2.5,alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"temperature [$^{\circ}$C]", fontsize=22)
     ax.set_ylabel("count", fontsize=22)
@@ -128,8 +128,8 @@ def plot_temp(temp_list):
     # ax.set_yscale("log")
     ax.grid(True,alpha=0.6)
     # ax.legend(fontsize=8,ncols=2,bbox_to_anchor=(0.5, 1.05),loc="center")
-    plt.savefig(plotFolder+f"/../transit_time_temp.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/../transit_time_temp.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../transit_time_temp{temp_limits[0]}_{temp_limits[1]}C.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/../transit_time_temp{temp_limits[0]}_{temp_limits[1]}C.pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
 def plot_mu(mu_list,temp_limits):
@@ -143,7 +143,7 @@ def plot_mu(mu_list,temp_limits):
     bins = np.linspace(int(min(mu_list)-1),int(max(mu_list)+1),int((max(mu_list)-min(mu_list))/6)+1)
     # bins = np.linspace(50, 70,41)
     ax.hist(mu_list,bins=bins,histtype="step",color="orange",label=f"Chiba",linewidth=2.5,alpha=1)
-    ax.axvline(x=R5912_100_tt, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tt:.0f} ns",linewidth=2.5,alpha=1)
+    # ax.axvline(x=R5912_100_tt, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tt:.0f} ns",linewidth=2.5,alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"PMT Time - Tabletop Time $\mu$ [ns]", fontsize=22)
     ax.set_ylabel("count", fontsize=22)
@@ -165,7 +165,7 @@ def plot_sigma(sigma_list,temp_limits):
     # bins = np.linspace(int(min(sigma_list)-1),int(max(sigma_list)+1),int((max(sigma_list)-min(sigma_list)))+1)
     bins = np.linspace(0,5,51)
     ax.hist(sigma_list,bins=bins,histtype="step",color="orange",label=f"Chiba",linewidth=2.5,alpha=1)
-    ax.axvline(x=R5912_100_tts, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tts:.1f} ns",linewidth=2.5,alpha=1)
+    # ax.axvline(x=R5912_100_tts, ymin=0, ymax=1,ls="--",color="gray",label=f"{R5912_100_tts:.1f} ns",linewidth=2.5,alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"PMT Time - Tabletop Time $\sigma $ [ns]", fontsize=22)
     ax.set_ylabel("count", fontsize=22)
@@ -285,7 +285,7 @@ def transit_params(degg_list,temp_limits):
     plot_chi2(chi2_list,temp_limits)
     plot_chi2mu(chi2_list,mu_list,temp_limits)
     plot_chi2Sigma(chi2_list,sigma_list,temp_limits)
-    plot_temp(temp_list)
+    plot_temp(temp_list,temp_limits)
     return a_list,mu_list,sigma_list
 
 
@@ -302,6 +302,7 @@ def count_DOM_PMTs(degg_list):
 # count_DOM_PMTs(degg_list)
 
 transit_params(degg_list,[-30,-10])
+transit_params(degg_list,[-30,50])
     
     
 # make_transit_plots(degg_list)
