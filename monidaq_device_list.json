@@ -1,0 +1,2228 @@
+[
+  {
+    "fieldhub_id": "fieldhub87",
+    "devices": [
+      {
+        "icm_id": "0300000f170f952d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0400000f189a9e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0400000fd3c2ab2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0a000030c2fd532d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "0e00000f173a852d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "1200000fd3c2062d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "12000030c2c6e62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "13000030c359192d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "17000030c2fd242d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "18000030c315792d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1c00000f170a8c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "1d000030c1f2142d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2200000f18b2412d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "24000030c228cd2d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "2500003235849a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "27000030c32b282d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2a000030c34ac32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2b00000fd3c3672d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2e00003009c23b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3000002c7303b82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "34000011ac15282d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "35000030c30ba82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3700002c73076c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3700003009dd642d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3f00003009dd282d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4300000f1584b82d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "46000010b1298f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4700000f173d512d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4a000030c3591a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4b00000fd3c2052d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4c000030c347382d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4f00002c7271592d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5000003009b6512d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5400000f15678a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5600000f18a20d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "56000030c321b42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "58000030c321cd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5f000030c30b8c2d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "6100002c7206d22d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "75000009b8d96a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7700000f17b3522d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7c00000f171a7e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7d000011ac14aa2d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "7e00000f18aec42d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8100002c73074c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8200002c72069b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "83000030c359252d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "86000011abeffd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8600002c731ac02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8900002c71e3e52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8c000030c346d72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9900000fd3bb3d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "99000030c32b442d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9c000030c32afe2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9f00000f18b8412d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a700000fd3c4e62d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a800000f17db152d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "af00003009c3032d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "af000030c341272d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "b600003009dc5c2d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "b900002c7303d52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b9000030c30e1b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b90000323584cc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ba000030c3474a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "cf00000f18b6152d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "d2000011ac15c22d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d2000030c2c7092d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d7000030c358d02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "db000030c321ff2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "dd00002c7306f52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "de000030c30bad2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e000000f17ab9f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e0000032357ae92d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "e400000f18aea72d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e500000ede349b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e600000fd3df5b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ec00002c71e33d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f100000f18a11b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f1000030c1ebf92d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f300003009b64a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f300003009c2ba2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f6000030c1ee342d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f6000030c3403d2d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "f7000030c307e12d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "fc00000f189b8c2d",
+        "board_name": "DEgg"
+      }
+    ]
+  },
+  {
+    "fieldhub_id": "fieldhub88",
+    "devices": [
+      {
+        "icm_id": "01000030c34a302d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "02000030c34fdb2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "02000030c359042d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0700000f157aea2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "09000030c2c2c02d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "0c000030c340252d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1400000fd3e65c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "19000030c34f992d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1f000030c34ad12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "210000323584bc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "23000030c346a62d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "25000009b8d9a02d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2500000fd3df3b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "26000009b8d9362d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "30000030c321fa2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "310000290cb0082d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "32000030c350642d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3700000fd3c96f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3900000f158dd52d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3900000f17307e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3b000030c30bd12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "44000030c30bce2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4900000f18b3f92d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5800000f18aed82d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5900000f17b1302d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5b000030c2c67d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5e0000290cb08f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6000002c72074e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6900000f1713942d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6b000011ac151e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6c000030c359062d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6d00000f18a2662d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6d000011abeff82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6d000030c321df2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6f000030c340c82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7000000ede15162d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "70000030c340ac2d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "760000323584c62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "78000030c358a12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "79000030c2c75e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "79000030c3472a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7e000030c2c6f72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "800000290cb1812d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8500000f1723a32d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8600000f189c7f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8d000030c3474b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8d000032357c2b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8e000030c346c42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8f000030c358562d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "90000030c2ff022d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "910000290cb19c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "93000030c3506c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9400000f18960e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "94000011abef762d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "9600000f173dba2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "97000030c340c32d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "98000030c315dd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9900000f170a8b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a400000f1711bf2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a5000011ac14882d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a5000030c30b942d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "a6000030c358b62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a7000030c3592a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a800003009dda42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a8000030c345f32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "aa00000f1885642d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "aa000030c2fef52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ae00000fd3bb3c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b200000fd3c9682d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b200000fd3e4d62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b500000f18b49b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "be00000fd3e68e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "be000030c3220c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c0000030c3155b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "cf000030c2fd062d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d2000030c2fd712d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d5000030c343a92d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d5000030c3500b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d9000030c2ff992d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "da00000f189b902d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "db00000fd3c46f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "db0000290cb0882d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "db000030c340fb2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "dc00000f1728432d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e0000030c350192d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e0000030c358d12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e3000030c2c73d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e7000009b8d9452d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e7000030c2c6022d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e9000030c2c7622d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ec00000f1713932d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ee000030c2ff982d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ef00000fd3ce022d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f2000030c2c7202d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f500000f1567822d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f5000030c31bd72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f9000030c2ffb02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "fd000030c346b12d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "fd000030c358a62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ff00000f158e3d2d",
+        "board_name": "DEgg"
+      }
+    ]
+  },
+  {
+    "fieldhub_id": "fieldhub89",
+    "devices": [
+      {
+        "icm_id": "0700000f172ea12d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0800000f172b202d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0a00000fd3c1f92d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0b00000fd3df6b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0d000011abef832d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "10000030c3505e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "15000011ac149d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "16000030c320ff2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "17000030c2c56e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "18000030c306db2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1b000030c359552d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1c000030c343962d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1d00000ede1b1c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "1e00000fd3c6082d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2100003009b6372d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "23000030c358b12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2400000f17dd8d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "25000030c3105a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "25000030c346932d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "28000030c359722d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2900000fd3df512d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "29000030c343842d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2a000009b8d95c2d",
+        "board_name": "LOM18"
+      },
+      {
+        "icm_id": "2c00000f1884ec2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2c00000fd3e4932d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2f000030c2290e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "30000030c358bf2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3300000f170e3d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3600000f172dbe2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "37000030c30bbb2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "38000030c2ffc32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3900000fd3c9162d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3b00000fd3c9052d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3d000030c341082d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3f000030c3595a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "42000030c30dad2d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "44000030c32adc2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4900000fd3cd912d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "54000030c346f52d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5800000fd3df372d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5b000030c30dfc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5b000030c34fd82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5c000011abefcc2d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "5d000030c2c7512d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5d000030c347252d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5e000030c2c6de2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5e000030c342ce2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6000000f189d8c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "610000290caed52d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "67000030c315662d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6a000030c347242d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6b000030c2c5e72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6c000030c2c67c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6d00000f1885222d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6f000030c32b362d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7000000f1888e02d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "730000290cae5e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "73000030c34fbd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7700000f18b3312d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7e000030c3080b2d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "7f00000fd3c4c42d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "83000030c3462b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "86000030c321da2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "92000030c359382d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9400000f1739cd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9600000f18a2fb2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9c000030c30bec2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9c000030c3464f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9d000030c2fef42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9f000030c343a42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a000000ede25fa2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a5000030c32a862d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a8000030c346d82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ab000030c340182d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ac000030c3154a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "af00000f1762da2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b100003009b60b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ba00003009b5fa2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "be000030c358622d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c1000030c3466a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c5000030c32afd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c800000f1578d22d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c9000030c2ff012d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "cd000011abef752d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "d0000030c228ac2d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "d4000030c2c73c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d4000030c322282d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "da000030c3159c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "dc000030c34fcc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e0000030c31ca32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e7000030c358612d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ec00000f18a8bd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ed00000f18b7362d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ef000030c2ff1d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f1000030c2fcd72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f300000ede2c772d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f6000030c34fba2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "fb000030c342e02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "fc00000f17344f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "fd00000f1890ea2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "fd000030c3459a2d",
+        "board_name": "mDOM"
+      }
+    ]
+  },
+  {
+    "fieldhub_id": "fieldhub90",
+    "devices": [
+      {
+        "icm_id": "0000000ede0f862d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0800000f1769042d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0b000011ac147c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0e00000f170e632d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0f000030c358f22d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "0f000032357bd32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1100000f1895222d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "1a000030c2c5812d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1d00000f18a9662d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "20000030c347292d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2100000f170c842d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "24000030c1faa42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "28000030c3467c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2f000032357cb52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "33000030c24c9c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3400000f155ac62d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "34000030c359802d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "40000030c32afa2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "40000032357c322d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4200000fd3c49a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4400000f172b182d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4400000fd3c4af2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4500003009c29a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4a00000f18aa372d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4b00000f189e542d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4f000032357b812d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "50000011ac146c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "56000030c346e62d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "57000030c3221a2d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "5b000032357c702d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5d000030c1fa8e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "68000030c1ee712d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "68000030c347372d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6b000011abefcd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6f00000f1716dc2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "73000011abf0172d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "74000032357ca52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7d00000f17dfbc2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "80000009b8d98e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8600000f1767472d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8800000fd3bf442d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8d000030c34afe2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8f00000f189e842d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "91000030c30d552d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "92000030c2fd232d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "990000300a37b32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "99000030c340ba2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9c00000fd3dfe72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9e000011abf6712d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a400000f171b452d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a4000030c345992d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a5000030c359392d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "a900003009c22f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b1000011ac152f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b7000010b126ca2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b7000030c30b1f2d",
+        "board_name": "LOM16"
+      },
+      {
+        "icm_id": "bb00000f176cfa2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "bd00000f18a3112d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c100000f17dfc32d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c50000300a31452d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c6000030c312212d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "c7000030c315eb2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c7000030c347462d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ca000030c343cd2d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "cc000030c2c6f12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d1000030c321a02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d300000f18a8f02d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "da000030c359262d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "dc000011ac16902d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "dc000030c1ee422d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "df00000f1713b42d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "df00000f171d2a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "df000032357bbd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e20000323584dc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e400000fd3c6102d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e8000030c359842d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "e900003009dd732d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ea00000f170afe2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f0000032357b682d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f100000fd3c3562d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f400000fd3e79a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f5000030c31c982d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f7000030c321bc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "fc00000f1589e42d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "fe00000f1899ad2d",
+        "board_name": "DEgg"
+      }
+    ]
+  },
+  {
+    "fieldhub_id": "fieldhub91",
+    "devices": [
+      {
+        "icm_id": "03000030c307802d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "07000030c1a6282d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0900002c71e3412d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0a00000f17ae622d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0b0000290caef12d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0b00002c7303d32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0b000030c1edb72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0c00000f18a4ce2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0d00000fd3cde52d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0d00003009c39d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0e000030c30bc32d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1200000f1772a92d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "14000030c358b02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "18000030c346cd2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1d00000f1898fd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2400000f17c8792d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "24000030c30bb52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2700000f170e832d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2800000fd3dfd42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2900002c73078d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2a00000ede21652d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2c00000fd3deeb2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "2e00000fd3e4802d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3500000f18b43f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3600000f02cc4a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3900000f189c962d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "39000030c340372d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "3c00002c71e3532d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3e000030c1ee8e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "47000030c1f9622d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4900000ede27de2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "4900000f1889812d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "52000030c1a6412d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5400002c71e3642d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5a00000fd3e6772d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5c000030c308312d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "5e000030c350752d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "65000030c1a6402d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6f00000fd3d6e72d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7100000f02fd332d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "7400003009cb7f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "74000032357af32d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "740000323584d52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7500000fd3dff12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7c00002c71e3012d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7e000030c32b2b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "80000030c1f1ec2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "85000030c315aa2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8700003009c27f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8a00000fd3c9952d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8b00000f18a8762d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "8c000030c315632d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "8c000030c350082d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "95000030c2c5d92d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "95000030c2c6f22d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9a00003009dd062d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "9b00003009dd832d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9c00000f18a5eb2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9c00000fd3c48d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "9c0000290cae7d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a0000030c346942d",
+        "board_name": "LOM18"
+      },
+      {
+        "icm_id": "a300000f18a4bf2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a3000030c3437f2d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "a7000030c1f25e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a9000030c1f2272d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ac00002c7303ee2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ac000030c321ac2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b0000030c315b82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b100000f17cbcd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b6000030c30b9a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "bc00000f1739a82d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "bf00000f1711fd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c000002c7206da2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c300003009c3122d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c3000030c30bda2d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "c600000f17b8212d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c600000fd3c3572d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "ca000011ac15162d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "cb00000f170d1d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "cd00000f17dbcd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "d2000030c1ee3b2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d700003009b6452d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d900000f173c0d2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "db00000f173e2c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "dd000030c346982d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "df000030c2c5d42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e0000030c30e182d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "e800000f17b4dd2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ed000030c343542d",
+        "board_name": "LOM16"
+      },
+      {
+        "icm_id": "f500002c7303ed2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "f600000f1724992d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f900000fd3bf222d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "fb00000f158a7f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "fb000030c1fa362d",
+        "board_name": "mDOM"
+      }
+    ]
+  },
+  {
+    "fieldhub_id": "fieldhub92",
+    "devices": [
+      {
+        "icm_id": "0000000f17cd0b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0300000f1727562d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "03000030c1fa3d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "0a00000f1735242d",
+        "board_name": "LOM18"
+      },
+      {
+        "icm_id": "0a00000fd3c9312d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "0c000011ac14cc2d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "14000030c350782d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "180000290896cc2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "1900003009b6ca2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "1e000030c2fcf42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "21000030c358a22d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "28000030c1f2062d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "2e00000f17d34c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3300000fd3c2aa2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3700000fd3e9642d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "37000011ac14a72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "37000030c2fd0d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "3900000f17135e2d",
+        "board_name": "LOM18"
+      },
+      {
+        "icm_id": "3a0000290cb0d22d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "3c000030c229002d",
+        "board_name": "PencilBeam"
+      },
+      {
+        "icm_id": "3d00000f170a202d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "40000030c359452d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "41000030c3157a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4700003009c2892d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "49000030c346822d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "4b000030c3079e2d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "4c000030c214d42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "50000030c30e0d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "5500000f172a1c2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5700000f18a6ec2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "5a000011abeff92d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "60000030c34ace2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "66000030c359592d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6a000010b129cc2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6b0000035628ae2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "6c000030c346082d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6d00003009b7162d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6d000030c340db2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "6e00003009dc7e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7200000f18845f2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "73000030c34ac02d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "78000030c2c2a62d",
+        "board_name": "Acoustic"
+      },
+      {
+        "icm_id": "7900003009c2412d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "7a000030c346a52d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "82000030c320e52d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "85000030c1a5b42d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "89000030c3077b2d",
+        "board_name": "LOM16"
+      },
+      {
+        "icm_id": "8f000030c2c2512d",
+        "board_name": "LOM16"
+      },
+      {
+        "icm_id": "90000032357c5c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9400002c7213c22d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "9e000030c347452d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a200000f17275e2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "a5000032357c4e2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a6000032357cd82d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "a900000f172a312d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ac00000fd3bb2f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b0000032357b3a2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b300000f17718a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b300000fd3c8f42d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "b4000030c2fd3f2d",
+        "board_name": "POCAM"
+      },
+      {
+        "icm_id": "b600003009dd452d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "b700000f17666a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "bd000030c321b12d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c1000030c315de2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c300003009dc1c2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c600000ede2e572d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "c7000030c1f2252d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "c8000030c320e82d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "d200000f18a8752d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "d6000030c3410d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d8000032357c422d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "d90000300a3b4d2d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "da000009b8d91b2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "db000032357b9b2d",
+        "board_name": "pDOM"
+      },
+      {
+        "icm_id": "dc000030c347042d",
+        "board_name": "WOM"
+      },
+      {
+        "icm_id": "df0000290cb0ae2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "e2000030c1ebf72d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "eb00000f18a78a2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ec000009b8d99f2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ec00000ede19ec2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "f900003009b6152d",
+        "board_name": "mDOM"
+      },
+      {
+        "icm_id": "fd00000f1717ea2d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ff00000f171e282d",
+        "board_name": "DEgg"
+      },
+      {
+        "icm_id": "ff000011abefd72d",
+        "board_name": "pDOM"
+      }
+    ]
+  }
+]
