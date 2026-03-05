@@ -1881,6 +1881,10 @@
       {
         "icm_id": "fb000030c1fa362d",
         "board_name": "mDOM"
+      },
+      {
+        "icm_id": "icmID\r\n5c000030c308312d",
+        "board_name": "PencilBeam"
       }
     ]
   },
@@ -2222,6 +2226,10 @@
       {
         "icm_id": "ff000011abefd72d",
         "board_name": "pDOM"
+      },
+      {
+        "icm_id": "icmID\r\n3900000f17135e2d",
+        "board_name": "LOM18"
       }
     ]
   }

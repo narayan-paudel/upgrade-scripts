@@ -428,9 +428,9 @@ def extract_transit_time(mdom_list):
                 channel = extract_channel(ifile)
                 # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
                 #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
-                if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
-                    mu_list.append(mu)
-                    sigma_list.append(sigma)
+                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
+                mu_list.append(mu)
+                sigma_list.append(sigma)
             if len(mu_list)>0:
                 if len(mu_list)==1:
                     tt = mu_list[0]
@@ -441,7 +441,7 @@ def extract_transit_time(mdom_list):
             best_mu = np.median(mu_list)
             # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements")
             # print(f"mDOM {mdom_name} pmt {ipmt} channel {channel} has mean transit time {tt:.1f} and {mu_list}")
-            pmt_dict[f"channel_{channel}"] = best_mu
+            pmt_dict[f"channel_{channel}"] = mu_list
         mdom_dict[mdom_name] = pmt_dict
     return mdom_dict
 

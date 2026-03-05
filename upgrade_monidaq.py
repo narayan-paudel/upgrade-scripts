@@ -16,7 +16,7 @@ VERICAL_PASS="skua"
 
 with open(monidaq_devices_path, "r") as fh:
     device_list = json.load(fh)
-    for fh in device_list[1:2]:
+    for fh in device_list[:]:
         print(fh["fieldhub_id"])
         print(len(fh["devices"]))
         for idevice in fh["devices"]:
