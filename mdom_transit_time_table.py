@@ -37,6 +37,34 @@ for ifile in mdom_list:
 mdom_names = [istr.split("/")[-1] for istr in mdom_list]
 
 
+upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+
+geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
+
+# print(geometry_files)
+
+string_list = ["87","88","89","90","91","92"]
+
+def get_device_list(string,device):
+    device_list = []
+    for ifile in geometry_files:
+        if string in ifile:
+            # print(f"ifile {ifile}")
+            with open(ifile, 'r') as f:
+                data = json.load(f)
+                # print(f"data {data[0]}")
+            for idev in data[0]["devices"]:
+                # print(f"this device #################################")
+                # print(f"idev {idev}")                
+                if device in idev["production_id"]:
+                    device_list.append(idev["production_id"])
+            # device_list.append(ifile.split("/")[-1].split("_")[0]+"_"+ifile.split("/")[-1].split("_")[1])
+    # print(f"device list for {device} on string {string} {len(device_list)} {device_list}")
+    return device_list
+
+deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+# print(f"device list {len(device_list)} {device_list}")
+
 
 from customColors import qualitative_colors
 
@@ -172,7 +200,7 @@ def extract_fit_params(json_file):
     y_values = data["meas_data"][0]['y_values']
     # print(data["meas_data"])
     # print(len(data["meas_data"]))
-    param_dict = {"Transit time":np.nan,"Transit time spread":np.nan,"a":np.nan,"b":np.nan,"c":np.nan,"chi2":np.nan}
+    param_dict = {"Transit time":np.nan,"Transit time spread":np.nan,"a":np.nan,"b":np.nan,"c":np.nan,"chi2":np.nan,"applied HV":np.nan}
     for j,ielt in enumerate(data["meas_data"][1:]):
         param_dict[ielt["label"]] = ielt["value"]
 
@@ -188,7 +216,7 @@ def extract_fit_params(json_file):
 
 
     return param_dict["Transit time"], param_dict["Transit time spread"],param_dict["a"]\
-        ,param_dict["b"],param_dict["c"],param_dict["chi2"]
+        ,param_dict["b"],param_dict["c"],param_dict["chi2"],param_dict["applied HV"]
 
 def plot_mu(mu_list,b_list,meas_site):
     print(f"mu min {min(mu_list)}max{max(mu_list)}")
@@ -367,9 +395,8 @@ def transit_params(mdom_list,meas_site):
         if check_meas_site(ifile) == meas_site:
             files_at_site.append(ifile)
 
-            mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
+            mu,sigma,a,b,c,chi2,ihv = extract_fit_params(ifile)
             itemp = extract_temperature(ifile)
-            ihv = extract_HV(ifile)
             # if 88<ihv<91:
             #     print(f"HV close to 89 {ifile}") 
 
@@ -422,10 +449,12 @@ def extract_transit_time(mdom_list):
             # print(f"files for {ipmt} {len(ifiles_this_pmt)}")
             mu_list = []
             sigma_list = []
+            hv_list = []
             for ifile in ifiles_this_pmt:
-                mu,sigma,a,b,c,chi2 = extract_fit_params(ifile)
+                mu,sigma,a,b,c,chi2,ihv = extract_fit_params(ifile)
                 itemp = extract_temperature(ifile)
                 channel = extract_channel(ifile)
+                hv_list.append(ihv)
                 # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
                 #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
                 # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
@@ -441,7 +470,7 @@ def extract_transit_time(mdom_list):
             best_mu = np.median(mu_list)
             # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements")
             # print(f"mDOM {mdom_name} pmt {ipmt} channel {channel} has mean transit time {tt:.1f} and {mu_list}")
-            pmt_dict[f"channel_{channel}"] = mu_list
+            pmt_dict[f"channel_{channel}"] = [mu_list,hv_list]
         mdom_dict[mdom_name] = pmt_dict
     return mdom_dict
 
@@ -462,25 +491,101 @@ def get_transit_time_dict(mdom_list):
         json.dump(ordered_mdom_dict, f, indent=4)
 
 
+def get_mdom_production_id(mdom_path_name):
+    '''
+    extract production id from mdom path name
+    '''
+    return mdom_path_name.split("/")[-1].split("_")[0]+"_"+mdom_path_name.split("/")[-1].split("_")[1]
+
+
 combined_mdom_list = mdom_list_msu + mdom_list_desy
 # combined_mean_plot(mdom_list_desy,mdom_list_msu)
-get_transit_time_dict(combined_mdom_list)
+combined_mdom_list_deployed = [imdom for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list]
+get_transit_time_dict(combined_mdom_list_deployed)
 
 
-def inspect_transit_time(transit_time_file):
-    with open(transit_time_file, 'r') as f:
-        data = json.load(f)
-        flat_mDOM = []
-        for mdom, channels in data.items():
-            for channel, value in channels.items():
-                if np.isnan(value):
-                    print(f"mDOM {mdom} channel  {channel} value {value}")
-                elif int(value) == 0:
-                    flat_mDOM.append(mdom)
-                elif value < 25 or value > 60:
-                    print(f"mDOM {mdom} channel  {channel} value {value}")
+print(f"Combined mDOM list has {len(combined_mdom_list)} entries")
 
-        flat_mDOM = list(set(flat_mDOM))
-        print(f"mDOMs with zero transit time {len(flat_mDOM)} {flat_mDOM}")
 
-inspect_transit_time(plotFolder+'/../mdom_transit_time.json')
+
+# for imdom in combined_mdom_list:
+#     print(f"{imdom} has production id {get_mdom_production_id(imdom)}")
+
+print(f"deployed mdoms {len(deployed_device_list)} {len(combined_mdom_list)} {len([get_mdom_production_id(imdom) for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list])}")
+
+print(f"deployed mdom missing transit time {[imdom for imdom in deployed_device_list if get_mdom_production_id(imdom) not in [get_mdom_production_id(idom) for idom in combined_mdom_list]]}")
+
+
+# print(f" 87 {get_device_list("87","mDOM")}")
+# print(f" 88 {get_device_list("88","mDOM")}")
+# print(f" 89 {get_device_list("89","mDOM")}")
+# print(f" 90 {get_device_list("90","mDOM")}")
+# print(f" 91 {get_device_list("91","mDOM")}")
+# print(f" 92 {get_device_list("92","mDOM")}")
+
+
+def list_mDOMs_missing_transit_time(string,mdom_list):
+    print(f"working on string {string}")
+    missing_mdoms = []
+    select_mdoms = []
+    deployed_device_list = get_device_list(f"{string}","mDOM")
+    for imdom in mdom_list:
+        production_id = get_mdom_production_id(imdom)
+        if production_id in deployed_device_list:
+            select_mdoms.append(imdom)
+    single_hv_missing = []
+
+    for imdom in select_mdoms[:]:
+        mdom_name = imdom.split("/")[-1]
+        mdom_name = mdom_name.split("_")[0]+"_"+mdom_name.split("_")[1]
+        ifiles = sorted(glob.glob(imdom+"/m*_pmt_*.json"))
+        PMT_list = [re.search(r"(DM\d+)", ifilename).group(1) for ifilename in ifiles]
+        PMT_list = list(set(PMT_list))
+
+        # print(f"pmt list   {len(PMT_list)} {PMT_list}")
+        pmt_dict = {}
+        for ipmt in PMT_list:
+            # pmt_dict = {}
+            ifiles_this_pmt = sorted(glob.glob(imdom+f"/m*_pmt_{ipmt}*.json"))
+            # print(f"files for {ipmt} {len(ifiles_this_pmt)}")
+            mu_list = []
+            sigma_list = []
+            hv_list = []
+            for ifile in ifiles_this_pmt:
+                mu,sigma,a,b,c,chi2,ihv = extract_fit_params(ifile)
+                itemp = extract_temperature(ifile)
+                channel = extract_channel(ifile)
+                hv_list.append(ihv)
+
+                # if np.isnan(ihv):
+                    # single_hv_missing.append(mdom_name)
+
+
+                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
+                #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
+                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
+                mu_list.append(mu)
+                sigma_list.append(sigma)
+            # print(len(mu_list),mu_list[0])
+            # if mdom_name == "mDOM_D065":
+            #     print(f"mDOM {mdom_name} pmt {ipmt} check in nan {mu_list[0]}")
+            if len(mu_list)==1 and np.isnan(hv_list[0]):
+                single_hv_missing.append(mdom_name)
+            # if len(mu_list)==1 and np.isnan(mu_list[0]):
+            #     missing_mdoms.append(mdom_name+"ch{channel}")
+            #     print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements with mean {mu_list} and hv {hv_list}")
+    single_hv_missing = list(set(single_hv_missing))
+    # if len(single_hv_missing)>0:
+    #     print(f'mDOMs with single measurement and missing HV {list(set(single_hv_missing))}')
+    missing_mdoms = list(set(missing_mdoms))
+    if len(missing_mdoms)>0:
+        print(f'mDOMs missing transit time {missing_mdoms}')
+
+    return missing_mdoms
+
+list_mDOMs_missing_transit_time("87",combined_mdom_list)
+list_mDOMs_missing_transit_time("88",combined_mdom_list)
+list_mDOMs_missing_transit_time("89",combined_mdom_list)
+list_mDOMs_missing_transit_time("90",combined_mdom_list)
+list_mDOMs_missing_transit_time("91",combined_mdom_list)
+list_mDOMs_missing_transit_time("92",combined_mdom_list)
