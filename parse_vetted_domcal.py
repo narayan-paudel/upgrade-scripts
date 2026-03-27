@@ -2,7 +2,6 @@
 
 import os
 import glob
-import re
 
 import numpy as np
 import scipy.stats as stats
@@ -250,8 +249,8 @@ def transit_time_hist(mdom_list):
     ax.text(0.95, 0.85, fr"mean $tt_{{{'Ice'}}}$: {np.mean(transit_times_ice):.0f}"+r"$\pm$" + fr" {np.std(transit_times_ice):.0f} ns", transform=ax.transAxes, ha='right', va='top')
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12,ncols=1)
-    plt.savefig(plotFolder+f"/fat_Ice_transit_time.png",transparent=False,bbox_inches='tight')
-    plt.savefig(plotFolder+f"/fat_Ice_transit_time.pdf",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+"/fat_Ice_transit_time.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+"/fat_Ice_transit_time.pdf",transparent=False,bbox_inches='tight')
     plt.close()
     
 # transit_time_hist(combined_mdom_list_deployed)
