@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import os
-import glob
-import re
 
 import numpy as np
 import scipy.stats as stats
