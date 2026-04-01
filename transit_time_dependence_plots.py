@@ -135,7 +135,7 @@ def extract_json_tts_chi2_filter(transit_time_file,obj_key,filter_tts,filter_chi
     print(f"diff difference chi2 tt filter {len(list(set(pmt_all)))-len(list(set(pmt_filter)))}")
     selected_pmts = [ielt for ielt in list(set(pmt_filter))]
     rejected_pmts = [ielt for ielt in list(set(pmt_all)) if ielt not in list(set(pmt_filter))]
-    print(f"rejected pmts: {rejected_pmts}")
+    # print(f"rejected pmts: {rejected_pmts}")
     return data_values, selected_pmts,rejected_pmts
     
 
@@ -376,7 +376,7 @@ def plot_single_transit_time_histogram(mDOM_prod_id, channel, mdom_tt_dir, plotF
             ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom[i],label=f"Run {run}: tt {b:.0f} ns ({tt:.0f} ns) tts {tt_spread:.0f} ns chi2 {chi2:.1f}",alpha=1)
             if fit_line:
                 x_values = np.linspace(fit_xlim[0],fit_xlim[1],1000)                
-                ax.plot(x_values,gauss(x_values,a,b,c),ls='--',lw = 2.5,c=colorsCustom[i],alpha=0.5)
+                ax.plot(x_values,gauss(x_values,a,b,c),ls='--',lw = 2.5,c=colorsCustom[i],alpha=1)
 
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
@@ -406,7 +406,25 @@ def device_with_negative_tt(transit_time_file, mdom_tt_dir) -> list:
                         break
     return list(set(negative_tt_devices))
 
+def prod_id_to_icm_id(prod_id,geometry_files) -> str:
+    '''
+    production id
+    '''
+    icm_id_list = []
+    for ifile in geometry_files:
+        with open(ifile, 'r') as f:
+            data = json.load(f)
+        for idev in data[0]["devices"]:
+            if idev["production_id"] == prod_id:
+                icm_id_list.append(idev["icm_id"])
+    if len(icm_id_list)>1:
+        print(f"more than one icm id found for prod id {prod_id} {icm_id_list}")
+    return icm_id_list[0]
+
+
 def main() -> None:
+    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
     mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
     plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
     transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
@@ -454,12 +472,16 @@ def main() -> None:
     #     plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder)
     # plot_single_transit_time_histogram("mDOM_M162",13,mdom_tt_dir, plotFolder)
     #chi2 based filtering
-    for device in chi2_rejected_pmts:
-    #     print(device.split("_channel_"))
-        mdom, channel = device
-        channel = channel.split("_")[-1]
-        # print(f"Plotting transit time histogram for {mdom} channel {channel} PMT UID {pmt_uid} RUN {run} with negative transit time")
-        plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True)
+    # for device in chi2_rejected_pmts:
+    # #     print(device.split("_channel_"))
+    #     mdom, channel = device
+    #     channel = channel.split("_")[-1]
+    #     # print(f"Plotting transit time histogram for {mdom} channel {channel} PMT UID {pmt_uid} RUN {run} with negative transit time")
+    #     plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True)
+    #getting ICM ID
+    print(prod_id_to_icm_id("mDOM_D114",geometry_files))
+    print(prod_id_to_icm_id("mDOM_D016",geometry_files))
+    print(prod_id_to_icm_id("mDOM_D219",geometry_files))
 
 
 if __name__ == "__main__":

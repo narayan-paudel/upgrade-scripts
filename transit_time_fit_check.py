@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 from transit_time_dependence_plots import extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram
+from transit_time_dependence_plots import prod_id_to_icm_id
 
 import json
 
@@ -27,6 +28,8 @@ colorsCustom = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462','#b3
 
 
 def main() -> None:
+    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
     mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
     plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
     ################################################################################
@@ -69,12 +72,13 @@ def main() -> None:
     #     plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80])
 
 
-    inspected_mdoms = ["mDOM_D001","mDOM_D002","mDOM_D003","mDOM_D004","mDOM_D005","mDOM_D006","mDOM_D007","mDOM_D008",
-                    "mDOM_D010","mDOM_D011","mDOM_D012","mDOM_D013","mDOM_D015","mDOM_D016"]
-    mdoms_needing_refit = [{"mDOM": "mDOM_D007", "channel": "18", "run": "22"}, {"mDOM": "mDOM_D015", "channel": "18", "run": "2"}, {"mDOM": "mDOM_D015", "channel": "22", "run": "2"}]
-    mdoms_with_runs_pick = [{"mDOM": "mDOM_D017", "channel": "0", "run": "152"}]
-    empty_measurement = [{"mDOM": "mDOM_D016", "channel": "13", "run": "138"}]
+
     plot_single_transit_time_histogram("mDOM_D017", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[151,153,154])#Run 151 very off
+    plot_single_transit_time_histogram("mDOM_D112", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[161,162,159,164])#Run 161 very off
+    plot_single_transit_time_histogram("mDOM_M049", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
+    # print(prod_id_to_icm_id("mDOM_D114",geometry_files))
+    # print(prod_id_to_icm_id("mDOM_D016",geometry_files))
+    # print(prod_id_to_icm_id("mDOM_D219",geometry_files))
 
 
 
