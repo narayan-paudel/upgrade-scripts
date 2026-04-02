@@ -75,7 +75,8 @@ def main() -> None:
 
     plot_single_transit_time_histogram("mDOM_D017", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[151,153,154])#Run 151 very off
     plot_single_transit_time_histogram("mDOM_D112", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[161,162,159,164])#Run 161 very off
-    plot_single_transit_time_histogram("mDOM_M049", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
+    for ichannel in range(1,24):
+        plot_single_transit_time_histogram("mDOM_M049", ichannel, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
     # print(prod_id_to_icm_id("mDOM_D114",geometry_files))
     # print(prod_id_to_icm_id("mDOM_D016",geometry_files))
     # print(prod_id_to_icm_id("mDOM_D219",geometry_files))

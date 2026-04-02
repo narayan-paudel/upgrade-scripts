@@ -166,11 +166,11 @@ def extract_fit_params(json_file):
 
 
 
-def plot_transit_time_histogram(transit_times, plot_name) -> None:
+def plot_transit_time_histogram(transit_times, plot_name,bins=200) -> None:
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
-    ax.hist(transit_times, bins=200,histtype='step',color=colorsCustom[0],linewidth=1.5 ,label=r'$tt_{FAT}$', alpha=0.7)
+    ax.hist(transit_times, bins=bins,histtype='step',color=colorsCustom[0],linewidth=1.5 ,label=r'$tt_{FAT}$', alpha=0.7)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"transit time [ns]", fontsize=22)
     ax.set_ylabel(r"count", fontsize=22)
@@ -350,8 +350,10 @@ def gauss(x, A, mu, sigma):
 def plot_single_transit_time_histogram(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],exclude_runs=[]) -> None:
     '''Plots the transit time histogram for a single mDOM and all its channels'''
     meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
+    available_channels = [extract_channel(ifile) for ifile in meas_files]
+    print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
     meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
-    # print(f"meas files for {mDOM_prod_id} {meas_files}")
+    print(f"meas files for {mDOM_prod_id} {meas_files}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
@@ -379,7 +381,8 @@ def plot_single_transit_time_histogram(mDOM_prod_id, channel, mdom_tt_dir, plotF
                 ax.plot(x_values,gauss(x_values,a,b,c),ls='--',lw = 2.5,c=colorsCustom[i],alpha=1)
 
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
-    ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
+    ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel}", transform=ax.transAxes, ha='left', fontsize=10)
+    # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
     ax.set_xlabel(f"{x_label}", fontsize=22)
     ax.set_ylabel(f"{y_label}", fontsize=22)
     ax.grid(True,alpha=0.6)
