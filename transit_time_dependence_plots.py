@@ -137,6 +137,20 @@ def extract_json_tts_chi2_filter(transit_time_file,obj_key,filter_tts,filter_chi
     rejected_pmts = [ielt for ielt in list(set(pmt_all)) if ielt not in list(set(pmt_filter))]
     # print(f"rejected pmts: {rejected_pmts}")
     return data_values, selected_pmts,rejected_pmts
+
+def extract_json_mdom_pmt_list(transit_time_file) -> list:
+    '''
+    Reads the json file with the list of DOMs and transit time measurements and returns a list of (mdom, pmts)
+
+    '''
+    pmt_all = []
+    with open(transit_time_file, 'r') as f:
+        data = json.load(f)
+        for mdom, tt_data in data.items():
+            # print(tt_data.keys())
+            for ichannel in tt_data["transit_times"]:
+                pmt_all.append((mdom,ichannel))
+    return list(set(pmt_all))
     
 
 
@@ -327,6 +341,9 @@ def get_pmt_uid(mdom_prod_id, channel,mdom_tt_dir) -> str:
     # print(f"PMT UID for {mdom_prod_id} channel {channel}: {pmt_uid}")
     if len(pmt_uid) > 1:
         print(f"multiple PMT UIDs found for {mdom_prod_id} channel {channel}: {pmt_uid}")
+    elif len(pmt_uid) == 0:
+        print(f"no PMT UID found for {mdom_prod_id} channel {channel}")
+        return None
     return pmt_uid[-1]
 
 def extract_run_number(json_file) -> str:
@@ -350,13 +367,17 @@ def gauss(x, A, mu, sigma):
 def plot_single_transit_time_histogram(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],exclude_runs=[]) -> None:
     '''Plots the transit time histogram for a single mDOM and all its channels'''
     meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
+
     available_channels = [extract_channel(ifile) for ifile in meas_files]
     print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
     meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
-    print(f"meas files for {mDOM_prod_id} {meas_files}")
+    if len(meas_files) == 0:
+        print(f"meas files for {mDOM_prod_id} channel {channel}: {meas_files}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
+    x_label = ""
+    y_label = ""
     for i,ifile in enumerate(meas_files):
         with open(ifile, 'r') as f:
             data = json.load(f)
@@ -485,6 +506,19 @@ def main() -> None:
     print(prod_id_to_icm_id("mDOM_D114",geometry_files))
     print(prod_id_to_icm_id("mDOM_D016",geometry_files))
     print(prod_id_to_icm_id("mDOM_D219",geometry_files))
+    mdom_pmt_list = extract_json_mdom_pmt_list(transit_time_file)
+    recovered_mdom_list = ["mDOM_D074", "mDOM_D075", "mDOM_D032",
+                            "mDOM_D076", "mDOM_D079", "mDOM_D041", "mDOM_D071",
+                              "mDOM_D036", "mDOM_D047", "mDOM_D070", "mDOM_D035",
+                                "mDOM_M168" ]
+    for device in mdom_pmt_list:
+        mdom, channel = device
+        if mdom in recovered_mdom_list:
+            channel = channel.split("_")[-1]
+            pmt_uid = get_pmt_uid(mdom, int(channel), mdom_tt_dir)
+            print(f"mDOM {mdom} channel {channel} PMT UID {pmt_uid}")
+            plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True)
+
 
 
 if __name__ == "__main__":

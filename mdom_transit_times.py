@@ -33,14 +33,23 @@ with open(args.input,"r") as fh:
 
 # print(mdom_list)
 
-mdom_exclude_list = ["mDOM_D032_v1","mDOM_D035_v1","mDOM_D036_v1",
-                     "mDOM_D041_v1","mDOM_D047_v1","mDOM_D070_v1","mDOM_D071_v1",
-                     "mDOM_D072_v1","mDOM_D074_v1","mDOM_D075_v1","mDOM_D076_v1",
-                     "mDOM_D079_v1"," mDOM_D124_v2","mDOM_D147_v1","mDOM_D148_v1",
-                     "mDOM_D178_v1","mDOM_M015_v1","mDOM_M081_v1","mDOM_M168_v1",
-                     "mdom_DVT_01_v2","mdom_DVT_02_v2","mdom_DVT_03_v2","mdom_DVT_04_v3",
+# mdom_exclude_list = ["mDOM_D032_v1","mDOM_D035_v1","mDOM_D036_v1",
+#                      "mDOM_D041_v1","mDOM_D047_v1","mDOM_D070_v1","mDOM_D071_v1",
+#                      "mDOM_D072_v1","mDOM_D074_v1","mDOM_D075_v1","mDOM_D076_v1",
+#                      "mDOM_D079_v1"," mDOM_D124_v2","mDOM_D147_v1","mDOM_D148_v1",
+#                      "mDOM_D178_v1","mDOM_M015_v1","mDOM_M081_v1","mDOM_M168_v1",
+#                      "mdom_DVT_01_v2","mdom_DVT_02_v2","mdom_DVT_03_v2","mdom_DVT_04_v3",
+#                      "mdom_DVT_05_v2","mdom_DVT_07_v1","mdom_DVT_08_v1","mdom_DVT_09_v1",
+#                      "mdom_DVT_10_v1","mdom_DVT_11_v1"]
+mdom_exclude_list = ["mdom_DVT_01_v2","mdom_DVT_02_v2","mdom_DVT_03_v2","mdom_DVT_04_v3",
                      "mdom_DVT_05_v2","mdom_DVT_07_v1","mdom_DVT_08_v1","mdom_DVT_09_v1",
                      "mdom_DVT_10_v1","mdom_DVT_11_v1"]
+
+# mdom_duplicate_list = ["mDOM_D074_v1"] #has ch 16 and ch 18 pmt name duplicate
+# mdom_include_list = ["mDOM_D032_v1","mDOM_D035_v1","mDOM_D036_v1",
+#                      "mDOM_D041_v1","mDOM_D047_v1","mDOM_D070_v1","mDOM_D071_v1",
+#                      "mDOM_D074_v1","mDOM_D075_v1","mDOM_D076_v1",
+#                      "mDOM_D079_v1","mDOM_M168_v1"]
 
 for idom in mdom_list[:]:
     if idom in mdom_exclude_list:

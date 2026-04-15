@@ -49,6 +49,7 @@ def main():
         pmt = doc['subdevice_uid']
         pmts.append(pmt)
         run = doc['run_number']
+        time = doc["meas_time"]
 
         mdomdir = output_dir+mdom
         if not os.path.exists(mdomdir):

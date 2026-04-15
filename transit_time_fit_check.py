@@ -9,8 +9,8 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
-from transit_time_dependence_plots import extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram
-from transit_time_dependence_plots import prod_id_to_icm_id
+from transit_time_dependence_plots import (extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram,
+                                            prod_id_to_icm_id)
 
 import json
 
