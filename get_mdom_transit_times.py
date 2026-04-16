@@ -54,7 +54,7 @@ def main():
         mdomdir = output_dir+mdom
         if not os.path.exists(mdomdir):
             os.makedirs(mdomdir)
-        filename = (mdomdir+'/{0}_{1}_{2}.json'.format(mdom, pmt, run))
+        filename = (mdomdir+'/{0}_{1}_{2}_{3}.json'.format(mdom, pmt, run, time))
         print('writing', filename)
         with open(filename, 'w') as jfile:
             json.dump(doc, jfile, separators=(', ', ': '), indent=4)

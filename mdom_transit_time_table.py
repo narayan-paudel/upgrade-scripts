@@ -503,7 +503,7 @@ def extract_transit_time(mdom_list):
                 channel = extract_channel(ifile)
                 hv_list.append(ihv)
                 run_number = extract_run_number(ifile)
-                tt_info = {"run_number": run_number, "mu": mu, "sigma": sigma, "chi2": chi2,"applied HV": ihv, "temperature": itemp}
+                tt_info = {"run_number": run_number, "mu": mu, "sigma": sigma,"a": a, "b": b, "c": c, "chi2": chi2,"applied HV": ihv, "temperature": itemp}
                 tt_info_map.append(tt_info)
                 # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
                 #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):

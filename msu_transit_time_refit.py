@@ -193,10 +193,9 @@ def plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFold
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
-    ax.hist(original_tt,histtype='step', bins=1000, alpha=0.5, label='Original TT')
-    ax.hist(refit_tt, histtype='step', bins=200, alpha=0.5, label='Refit TT')
-    ax.hist(refit_tt2, histtype='step', bins=200, alpha=0.5, label='Refit TT2')
-
+    ax.hist(original_tt,histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Original TT')
+    ax.hist(refit_tt, histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Refit TT')
+    ax.hist(refit_tt2, histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Refit TT2')
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
     ax.set_xlabel(f"{'tt [ns]'}", fontsize=22)
@@ -211,10 +210,74 @@ def plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFold
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
+def plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.hist(tt_diff, histtype='step', bins=1000, alpha=0.5, label='TT Difference (Refit - Original)')
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
+    ax.set_xlabel(f"{'tt [ns]'}", fontsize=22)
+    ax.set_ylabel(f"{'count'}", fontsize=22)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=12,ncols=1)
+    ax.set_yscale('log')
+    ax.set_xlim(-100, 100)
+    plot_name = f"{plotFolder}/transit_time_hist_after_refit"
+    print(f"plot name: {plot_name}")
+    # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+"tt_diff.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_chi2_diff_hist_after_refit(chi2_diff, plotFolder) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.hist(chi2_diff, histtype='step', bins=200, alpha=0.5, label='Chi2 Difference (Refit - Original)')
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
+    ax.set_xlabel(f"{'diff chi2'}", fontsize=22)
+    ax.set_ylabel(f"{'count'}", fontsize=22)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=12,ncols=1)
+    ax.set_yscale('log')
+    # ax.set_xlim(0, 80)
+    plot_name = f"{plotFolder}/transit_time_hist_after_refit"
+    print(f"plot name: {plot_name}")
+    # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+"chi2_diff.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_chi2_scatter_after_refit(chi2_original, chi2_refit, plotFolder) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.plot(chi2_original, chi2_refit, 'o', alpha=0.5, label='Chi2 Difference (Refit - Original)')
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
+    ax.set_xlabel(f"{'chi2 original'}", fontsize=22)
+    ax.set_ylabel(f"{'chi2 refit'}", fontsize=22)
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=12,ncols=1)
+    # ax.set_yscale('log')
+    # ax.set_xlim(0, 80)
+    plot_name = f"{plotFolder}/transit_time_hist_after_refit"
+    print(f"plot name: {plot_name}")
+    # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+"chi2_scatter.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+
+
+
 def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
     refit_tt = []
     refit_tt2 = []
     original_tt = []
+    chi2_values = []
+    chi2_refit = []
+    tt_diff = []
+    chi2_diff = []
     for device in MSU_mDOMs_list:
         mDOM_prod_id, channel = device
         channel = channel.split("_")[-1]
@@ -250,6 +313,7 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
                     chi2 = np.sum(((y_values - double_gaussian(x_values, *popt))/poisson_errors)**2)
                     ndof = len(x_values) - len(popt)
                     reduced_chi2 = chi2 / ndof
+                    chi2_refit.append(reduced_chi2)
                     A1, mu1, sigma1, A2, mu2, sigma2 = popt
                     refit_tt.append(mu1)
                     refit_tt2.append(mu2)
@@ -258,12 +322,15 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
                     # if run in exclude_runs:
                     #     continue
                     # ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom[i],label=f" tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C Run {run}",alpha=1)
-                    tt, tt_spread, a, b, c, chi2, hv = extract_fit_params(ifile)
+                    tt, tt_spread, a, b, c, chi2_original, hv = extract_fit_params(ifile)
                     original_tt.append(b)
+                    chi2_values.append(chi2_original)
+                    tt_diff.append(mu1 - b)
+                    chi2_diff.append(reduced_chi2 - chi2_original)
                 except RuntimeError:
                     print(f"Failed to fit double gaussian for {mDOM_prod_id} channel {channel}")
                     continue
-    return refit_tt,refit_tt2, original_tt     
+    return refit_tt,refit_tt2, original_tt, chi2_values, chi2_refit,tt_diff, chi2_diff
 
 
 
@@ -296,8 +363,11 @@ def main() -> None:
     #     mdom, channel = device
     #     channel = channel.split("_")[-1]
     #     plot_single_transit_time_histogram_refit_double_gaussian(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[])#Run 427 very off
-    refit_tt,refit_tt2,original_tt = get_transit_time_after_refit(MSU_mDOMs_list[:],mdom_tt_dir)
+    refit_tt,refit_tt2,original_tt, chi2_values, chi2_refit, tt_diff, chi2_diff =    get_transit_time_after_refit(MSU_mDOMs_list[:],mdom_tt_dir)
     plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFolder)
+    plot_chi2_diff_hist_after_refit(chi2_diff, plotFolder)
+    plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder)
+    plot_chi2_scatter_after_refit(chi2_values, chi2_refit, plotFolder)
 
     
 

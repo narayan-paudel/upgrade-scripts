@@ -507,17 +507,31 @@ def main() -> None:
     print(prod_id_to_icm_id("mDOM_D016",geometry_files))
     print(prod_id_to_icm_id("mDOM_D219",geometry_files))
     mdom_pmt_list = extract_json_mdom_pmt_list(transit_time_file)
-    recovered_mdom_list = ["mDOM_D074", "mDOM_D075", "mDOM_D032",
-                            "mDOM_D076", "mDOM_D079", "mDOM_D041", "mDOM_D071",
-                              "mDOM_D036", "mDOM_D047", "mDOM_D070", "mDOM_D035",
-                                "mDOM_M168" ]
-    for device in mdom_pmt_list:
-        mdom, channel = device
-        if mdom in recovered_mdom_list:
-            channel = channel.split("_")[-1]
-            pmt_uid = get_pmt_uid(mdom, int(channel), mdom_tt_dir)
-            print(f"mDOM {mdom} channel {channel} PMT UID {pmt_uid}")
-            plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True)
+    # recovered_mdom_list = ["mDOM_D074", "mDOM_D075", "mDOM_D032",
+    #                         "mDOM_D076", "mDOM_D079", "mDOM_D041", "mDOM_D071",
+    #                           "mDOM_D036", "mDOM_D047", "mDOM_D070", "mDOM_D035",
+    #                             "mDOM_M168" ]
+    recovered_mdom_list = ["mDOM_D074"]
+    #recovered_pmt_mdom_list
+    # plot_single_transit_time_histogram("mDOM_D074", 16, mdom_tt_dir, plotFolder,fit_line=True)
+    # plot_single_transit_time_histogram("mDOM_D074", 18, mdom_tt_dir, plotFolder,fit_line=True)
+    # plot_single_transit_time_histogram("mDOM_M030", 10, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_M030", 12, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_M049", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[427])
+    # plot_single_transit_time_histogram("mDOM_M049", 22, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[427])
+    plot_single_transit_time_histogram("mDOM_M063", 7, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_M063", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    #################################################################
+
+
+    
+    # for device in mdom_pmt_list:
+    #     mdom, channel = device
+    #     if mdom in recovered_mdom_list:
+    #         channel = channel.split("_")[-1]
+    #         pmt_uid = get_pmt_uid(mdom, int(channel), mdom_tt_dir)
+    #         print(f"mDOM {mdom} channel {channel} PMT UID {pmt_uid}")
+    #         plot_single_transit_time_histogram(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True)
 
 
 

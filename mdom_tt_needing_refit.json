@@ -13,5 +13,9 @@
                               {"mDOM": "mDOM_D090", "channel": "6", "run": "140"},
                               {"mDOM": "mDOM_D090", "channel": "14", "run": "140"},
                               {"mDOM": "mDOM_D092", "channel": "1", "run": "139"},
-                              {"mDOM": "mDOM_M162", "channel": "13", "run": "977"}
+                              {"mDOM": "mDOM_M162", "channel": "13", "run": "977"},
+                              {"mDOM": "mDOM_D036", "channel": "4", "run": "100"},
+                              {"mDOM": "mDOM_D036", "channel": "18", "run": "100"},
+                              {"mDOM": "mDOM_D070", "channel": "9", "run": "99"},
+                              {"mDOM": "mDOM_D070", "channel": "23", "run": "99"}
 ]
