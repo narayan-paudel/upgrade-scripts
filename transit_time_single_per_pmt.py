@@ -88,7 +88,7 @@ def get_single_gaussian_fit(mDOM_prod_id, channel, mdom_tt_dir) -> None:
 
 
 
-def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_refits_file,empties_file,site_str,filter_non_zero) -> list:
+def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_refits_file,empties_file,site_str,filter_non_zero,check_outliers=None) -> list:
     '''
     Reads the json file with the list of DOMs and transit time measurements and returns a list of transit times
     and other data values
@@ -146,6 +146,13 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                                 mu_list.append(tt[0])
                                 sigma_list.append(tts[0])
                                 chi2_list.append(chi2[0])
+                                if check_outliers:
+                                    if tt[0] < check_outliers[0]:
+                                        print(f"run picks data")
+                                        print(f"transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {tt[0]:.1f} ns")
+                                    if tt[0]>check_outliers[1]:
+                                        print(f"run picks data")
+                                        print(f"large transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {tt[0]:.1f} ns")
                                 if mdom+ f"_{int(ichannel.split('_')[-1])}" not in mdom_list_collection_checker:
                                     mdom_list_collection_checker.append(mdom+ f"_{int(ichannel.split('_')[-1])}")
                                     mdom_collection_checker.append(mdom)
@@ -158,6 +165,13 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                             mu_list.append(mu1)
                             sigma_list.append(sigma1)
                             chi2_list.append(reduced_chi2)
+                            if check_outliers:
+                                if mu1 < check_outliers[0]:
+                                    print(f"refit data")
+                                    print(f"transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {mu1:.1f} ns")
+                                if mu1>check_outliers[1]:
+                                    print(f"refit data")
+                                    print(f"large transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {mu1:.1f} ns")
                             if mdom+ f"_{int(ichannel)}" not in mdom_list_collection_checker:
                                 mdom_list_collection_checker.append(mdom+ f"_{int(ichannel)}")
                                 mdom_collection_checker.append(mdom)
@@ -173,6 +187,13 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                                             mu_list.append(itt["b"])
                                             sigma_list.append(itt["c"])
                                             chi2_list.append(itt["chi2"])
+                                            if check_outliers:
+                                                if itt["b"]< check_outliers[0]:
+                                                    print(f"others data")
+                                                    print(f"transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {itt['b']:.1f} ns")
+                                                if itt["b"]>check_outliers[1]:
+                                                    print(f"others data")
+                                                    print(f"large transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {itt['b']:.1f} ns")
                                             if mdom+ f"_{int(ichannel)}" not in mdom_list_collection_checker:
                                                 mdom_list_collection_checker.append(mdom+ f"_{int(ichannel)}")
                                                 mdom_collection_checker.append(mdom)
@@ -182,6 +203,13 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                                         mu_list.append(itt["b"])
                                         sigma_list.append(itt["c"])
                                         chi2_list.append(itt["chi2"])
+                                        if check_outliers:
+                                            if itt["b"]< check_outliers[0]:
+                                                print(f"others data")
+                                                print(f"transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {itt['b']:.1f} ns")
+                                            if itt["b"]>check_outliers[1]:
+                                                print(f"others data")
+                                                print(f"large transit time data for {mdom} channel {ichannel} {itt['run_number']} runs: {itt['b']:.1f} ns")
                                         if mdom+ f"_{int(ichannel)}" not in mdom_list_collection_checker:
                                             mdom_list_collection_checker.append(mdom+ f"_{int(ichannel)}")
                                             mdom_collection_checker.append(mdom)
@@ -240,6 +268,7 @@ def plot_transit_time_proxy_histogram(transit_times_msu, transit_times_desy, plo
     ax.text(0.95, 0.85, fr"DESY $tt_{{{'FAT'}}}$: {np.mean(transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     ax.text(0.95, 0.75, fr"Both $tt_{{{'FAT'}}}$: {np.mean(transit_times_msu+transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_msu+transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     ax.grid(True,alpha=0.6)
+    ax.set_xlim(45,65)
     ax.legend(fontsize=12,ncols=1)
     plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
@@ -258,12 +287,12 @@ def main() -> None:
     transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
     transit_times = extract_json(transit_time_file,obj_key="mu",filter_non_zero=False)
     # transit_times_single_per_pmt = extract_json_unique_tt(transit_time_file,run_picks_json,refit_json,empty_meas_json,obj_key="mu",filter_non_zero=True)
-    transit_times_single_per_pmt_msu, sigma_list, chi2_list = extract_json_unique_tt(transit_time_file,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False)
-    transit_times_single_per_pmt_desy, sigma_list, chi2_list = extract_json_unique_tt(transit_time_file,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_D",filter_non_zero=False)
+    transit_times_single_per_pmt_msu, sigma_list, chi2_list = extract_json_unique_tt(transit_time_file,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=[46,60])
+    transit_times_single_per_pmt_desy, sigma_list, chi2_list = extract_json_unique_tt(transit_time_file,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_D",filter_non_zero=False,check_outliers=[46,60.5])
     # print(transit_times_single_per_pmt)
     print(f"number of transit times: {len(transit_times)}")
     print(f"number of transit times with single entry per pmt:MSU {len(transit_times_single_per_pmt_msu)} DESY {len(transit_times_single_per_pmt_desy)} Both {len(transit_times_single_per_pmt_msu+transit_times_single_per_pmt_desy)}")
-    plot_transit_time_proxy_histogram(transit_times_single_per_pmt_msu,transit_times_single_per_pmt_desy,plotFolder+"/mDOM_transit_times_test",bins=np.linspace(40,70,121))
+    plot_transit_time_proxy_histogram(transit_times_single_per_pmt_msu,transit_times_single_per_pmt_desy,plotFolder+"/mDOM_transit_times_test",bins=np.linspace(45,65,41))
     measuerment_numbers = measurements_per_channel(transit_time_file)
     # print(f"measurement numbers per channel: {measuerment_numbers}")
     # plot_histogram(measuerment_numbers,plotFolder+"/mDOM_transit_time_measurement_numbers",bins=np.linspace(-0.5,20.5,22))

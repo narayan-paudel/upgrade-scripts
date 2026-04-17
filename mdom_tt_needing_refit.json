@@ -1,4 +1,5 @@
 [
+                              {"mDOM": "mDOM_D005", "channel": "18", "run": "26"},
                               {"mDOM": "mDOM_D007", "channel": "18", "run": "22"},
                               {"mDOM": "mDOM_D015", "channel": "18", "run": "2"},
                               {"mDOM": "mDOM_D015", "channel": "22", "run": "2"},
@@ -17,5 +18,7 @@
                               {"mDOM": "mDOM_D036", "channel": "4", "run": "100"},
                               {"mDOM": "mDOM_D036", "channel": "18", "run": "100"},
                               {"mDOM": "mDOM_D070", "channel": "9", "run": "99"},
-                              {"mDOM": "mDOM_D070", "channel": "23", "run": "99"}
+                              {"mDOM": "mDOM_D070", "channel": "23", "run": "99"},
+                              {"mDOM": "mDOM_D089", "channel": "18", "run": "140"},
+                              {"mDOM": "mDOM_M182", "channel": "13", "run": "1012"}
 ]

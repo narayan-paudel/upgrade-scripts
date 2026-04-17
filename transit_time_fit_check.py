@@ -47,6 +47,7 @@ def main() -> None:
     # transit_time_spread = extract_json(transit_time_file,obj_key="sigma",filter_non_zero=False)
     #chi2 based filtering
     transit_time_chi2_tt_filter,chi2_selected_pmts,chi2_rejected_pmts = extract_json_tts_chi2_filter(transit_time_file,obj_key="mu",filter_tts=6,filter_chi2=2,filter_non_zero=True)
+    
     #transit time outside 28-68 ns range
     # for device in chi2_rejected_pmts:
     # #     print(device.split("_channel_"))
@@ -75,6 +76,7 @@ def main() -> None:
 
     plot_single_transit_time_histogram("mDOM_D017", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[151,153,154])#Run 151 very off
     plot_single_transit_time_histogram("mDOM_D112", 0, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[161,162,159,164])#Run 161 very off
+    plot_single_transit_time_histogram("mDOM_M182", 13, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[])#Run 161 very off
     for ichannel in range(1,24):
         plot_single_transit_time_histogram("mDOM_M049", ichannel, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
     # print(prod_id_to_icm_id("mDOM_D114",geometry_files))

@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 from transit_time_dependence_plots import (extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram,
-                                            prod_id_to_icm_id,extract_channel,extract_fit_params,gauss,get_pmt_uid)
+                                            prod_id_to_icm_id,extract_channel,extract_fit_params,gauss,get_pmt_uid,extract_run_number)
+
+from refit_bad_tt_fits import merge_bins_reduceat
 
 import json
 
@@ -32,13 +34,13 @@ def gaussian(x, A, mu, sigma):
 def double_gaussian(x, A1, mu1, sigma1, A2, mu2, sigma2):
     return A1 * np.exp(-(x - mu1)**2 / (2 * sigma1**2)) + A2 * np.exp(-(x - mu2)**2 / (2 * sigma2**2))
 
-def plot_single_transit_time_histogram_refit_double_gaussian(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],exclude_runs=[]) -> None:
+def plot_single_transit_time_histogram_refit_double_gaussian(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],include_runs=[]) -> None:
     '''Plots the transit time histogram for a single mDOM and all its channels'''
     meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
     available_channels = [extract_channel(ifile) for ifile in meas_files]
-    print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
+    # print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
     meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
-    print(f"meas files for {mDOM_prod_id} {meas_files}")
+    # print(f"meas files for {mDOM_prod_id} {meas_files}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
@@ -71,8 +73,13 @@ def plot_single_transit_time_histogram_refit_double_gaussian(mDOM_prod_id, chann
                 reduced_chi2 = chi2 / ndof
                 A1, mu1, sigma1, A2, mu2, sigma2 = popt
 
+                if mu1 < 46 or mu1 > 60.5:
+                    print(f"Warning: mu1 {mu1:.2f} ns is out of expected range for {mDOM_prod_id} channel {channel} run {extract_run_number(ifile)}. Fit may not be reliable.")
+                if mu2 < 46 or mu2 > 60.5:
+                    print(f"Warning: mu2 {mu2:.2f} ns is out of expected range for {mDOM_prod_id} channel {channel} run {extract_run_number(ifile)}. Fit may not be reliable.")
+
                 run = data["run_number"]
-                if run in exclude_runs:
+                if len(include_runs)>0 and run not in include_runs:
                     continue
                 # ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom[i],label=f" tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C Run {run}",alpha=1)
                 tt, tt_spread, a, b, c, chi2, hv = extract_fit_params(ifile)
@@ -99,18 +106,18 @@ def plot_single_transit_time_histogram_refit_double_gaussian(mDOM_prod_id, chann
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12)
     # ax.set_yscale('log')
-    plot_name = f"{plotFolder}/{mDOM_prod_id}_channel_{channel}_refit"
+    plot_name = f"{plotFolder}/{mDOM_prod_id}_channel_{channel}_refit_double_gauss"
     # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
-def plot_single_transit_time_histogram_refit_single_gaussian(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],exclude_runs=[]) -> None:
+def plot_single_transit_time_histogram_refit_single_gaussian(mDOM_prod_id, channel, mdom_tt_dir, plotFolder,fit_line=False,fit_xlim=[-30,100],include_runs=[]) -> None:
     '''Plots the transit time histogram for a single mDOM and all its channels'''
     meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
     available_channels = [extract_channel(ifile) for ifile in meas_files]
-    print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
+    # print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
     meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
-    print(f"meas files for {mDOM_prod_id} {meas_files}")
+    # print(f"meas files for {mDOM_prod_id} {meas_files}")
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
@@ -139,7 +146,7 @@ def plot_single_transit_time_histogram_refit_single_gaussian(mDOM_prod_id, chann
             reduced_chi2 = chi2 / ndof
 
             run = data["run_number"]
-            if run in exclude_runs:
+            if len(include_runs) > 0 and run not in include_runs:
                 continue
             # ax.step(x_values,y_values,ls='-',lw = 2.5,c=colorsCustom[i],label=f" tt {mu:.1f}\u00B1{sigma:.1f} ns PMT HV {hv:.1f} V {temperature:.1f} \u00b0C Run {run}",alpha=1)
             tt, tt_spread, a, b, c, chi2, hv = extract_fit_params(ifile)
@@ -189,13 +196,13 @@ def extract_json_mdom_pmt_list(transit_time_file, site) -> list:
             raise ValueError(f"Invalid site {site}. Valid options are 'MSU', 'Desy', or None.")
     return pmt_select
 
-def plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFolder) -> None:
+def plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt,bins=np.linspace(40,80,81), plotFolder="") -> None:
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
-    ax.hist(original_tt,histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Original TT')
-    ax.hist(refit_tt, histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Refit TT')
-    ax.hist(refit_tt2, histtype='step', bins=np.linspace(40,80,400), alpha=0.5, label='Refit TT2')
+    ax.hist(original_tt,histtype='step', bins=bins, alpha=0.5, label='Original TT')
+    ax.hist(refit_tt, histtype='step', bins=bins, alpha=0.5, label='Refit TT')
+    ax.hist(refit_tt2, histtype='step', bins=bins, alpha=0.5, label='Refit TT2')
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
     ax.set_xlabel(f"{'tt [ns]'}", fontsize=22)
@@ -203,18 +210,18 @@ def plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFold
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12,ncols=1)
     ax.set_yscale('log')
-    ax.set_xlim(0, 80)
+    ax.set_xlim(45, 65)
     plot_name = f"{plotFolder}/transit_time_hist_after_refit"
     print(f"plot name: {plot_name}")
     # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
-def plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder) -> None:
+def plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder,bins) -> None:
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
-    ax.hist(tt_diff, histtype='step', bins=1000, alpha=0.5, label='TT Difference (Refit - Original)')
+    ax.hist(tt_diff, histtype='step', bins=bins, alpha=0.5, label='TT Difference (Refit - Original)')
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     # ax.text(0.55, 0.95, f"{mDOM_prod_id} channel {channel} {get_pmt_uid(mDOM_prod_id, int(channel), mdom_tt_dir)}", transform=ax.transAxes, ha='left', fontsize=10)
     ax.set_xlabel(f"{'tt [ns]'}", fontsize=22)
@@ -222,7 +229,7 @@ def plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder) -> None:
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12,ncols=1)
     ax.set_yscale('log')
-    ax.set_xlim(-100, 100)
+    ax.set_xlim(-5, 5)
     plot_name = f"{plotFolder}/transit_time_hist_after_refit"
     print(f"plot name: {plot_name}")
     # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
@@ -241,7 +248,7 @@ def plot_chi2_diff_hist_after_refit(chi2_diff, plotFolder) -> None:
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12,ncols=1)
     ax.set_yscale('log')
-    # ax.set_xlim(0, 80)
+    ax.set_xlim(-40, 5)
     plot_name = f"{plotFolder}/transit_time_hist_after_refit"
     print(f"plot name: {plot_name}")
     # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
@@ -260,7 +267,8 @@ def plot_chi2_scatter_after_refit(chi2_original, chi2_refit, plotFolder) -> None
     ax.grid(True,alpha=0.6)
     ax.legend(fontsize=12,ncols=1)
     # ax.set_yscale('log')
-    # ax.set_xlim(0, 80)
+    ax.set_ylim(0, 20)
+    ax.set_aspect('equal', adjustable='box')
     plot_name = f"{plotFolder}/transit_time_hist_after_refit"
     print(f"plot name: {plot_name}")
     # plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
@@ -270,7 +278,7 @@ def plot_chi2_scatter_after_refit(chi2_original, chi2_refit, plotFolder) -> None
 
 
 
-def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
+def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir,run_picks_file,need_refits_file,empties_file,site_str,filter_non_zero,check_outliers=None):
     refit_tt = []
     refit_tt2 = []
     original_tt = []
@@ -278,15 +286,39 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
     chi2_refit = []
     tt_diff = []
     chi2_diff = []
+    with open(run_picks_file, 'r') as f:
+        run_picks_data = json.load(f)
+    with open(need_refits_file, 'r') as f:
+        need_refits_data = json.load(f)
+    with open(empties_file, 'r') as f:
+        empties_data = json.load(f)
+    run_picks_data_mdoms = [ielt["mDOM"] for ielt in run_picks_data]
+    need_refits_data_mdoms = [ielt["mDOM"] for ielt in need_refits_data]
+    need_refits_data_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in need_refits_data]
+    empties_data_mdoms = [ielt["mDOM"] for ielt in empties_data]
+    empties_data_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in empties_data]
     for device in MSU_mDOMs_list:
         mDOM_prod_id, channel = device
         channel = channel.split("_")[-1]
         channel = int(channel)
         meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
         available_channels = [extract_channel(ifile) for ifile in meas_files]
-        print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
+        # print(f"available channels for {mDOM_prod_id}: {list(set(available_channels))}")
         meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
-        print(f"meas files for {mDOM_prod_id} {meas_files}")
+        # print(f"meas files for {mDOM_prod_id} {meas_files}")
+        remove_pedestal = None
+        merge_bins = None
+        if mDOM_prod_id in ["mDOM_D092"] and channel == 1:        
+            merge_bins = 2
+            print(f"{merge_bins} consecutive bins merged for {mDOM_prod_id} channel {channel}")
+        if mDOM_prod_id in ["mDOM_D029"] and channel == 1 or mDOM_prod_id in ["mDOM_D034"] and channel == 21:
+            remove_pedestal = 0
+            print(f"pedestal {remove_pedestal} removed for {mDOM_prod_id} channel {channel}")
+        if mDOM_prod_id in run_picks_data_mdoms:
+            select_mdom_run_data = [ielt for ielt in run_picks_data if ielt["mDOM"] == mDOM_prod_id][0]
+            select_channel_run_data = [ielt for ielt in select_mdom_run_data["select_run"] if int(ielt["channel"]) == int(channel)][0]
+            select_run = select_channel_run_data["run"]
+            meas_files = [ifile for ifile in meas_files if int(extract_run_number(ifile)) == int(select_run)]
         for i,ifile in enumerate(meas_files):
             with open(ifile, 'r') as f:
                 data = json.load(f)
@@ -298,6 +330,19 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
                 x_values = np.linspace(x_min,x_max,n_bins)
                 x_label = data["meas_data"][0]["x_label"]
                 y_label = data["meas_data"][0]["y_label"]
+                if remove_pedestal is not None:
+                    x_values_wo_ped = []
+                    y_values_wo_ped = []
+                    for ix,iy in zip(x_values,y_values):
+                        if abs(iy - remove_pedestal) > 0.001:
+                            x_values_wo_ped.append(ix)
+                            y_values_wo_ped.append(iy)
+
+                    x_values = x_values_wo_ped
+                    y_values = y_values_wo_ped
+                    # print(x_values)
+                if merge_bins is not None:
+                    y_values, x_values = merge_bins_reduceat(y_values, x_values, n=merge_bins)
                 initial_guess = [np.max(y_values), 55, 3, np.max(y_values)/1.5, 55, 3]
                 # bounds = ([0, 30, 0.1,0, 30, 0.1], #lower limits
                 #            [np.max(y_values)+100, 80, 6,np.max(y_values)+100, 80, 6])      # upper limits
@@ -315,6 +360,13 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
                     reduced_chi2 = chi2 / ndof
                     chi2_refit.append(reduced_chi2)
                     A1, mu1, sigma1, A2, mu2, sigma2 = popt
+
+                    if mu1 < 46 or mu1 > 62:
+                        print(f"mu1 {mu1:.2f} ns {mDOM_prod_id} ch {channel} run {extract_run_number(ifile)}")
+                        # print(f"Warning: mu1 {mu1:.2f} ns is out of expected range for {mDOM_prod_id} channel {channel} run {extract_run_number(ifile)}. Fit may not be reliable.")
+                    if mu2 < 46 or mu2 > 62:
+                        # print(f"Warning: mu2 {mu2:.2f} ns is out of expected range for {mDOM_prod_id} channel {channel} run {extract_run_number(ifile)}. Fit may not be reliable.")
+                        print(f"mu2 {mu2:.2f} ns {mDOM_prod_id} ch {channel} run {extract_run_number(ifile)}")
                     refit_tt.append(mu1)
                     refit_tt2.append(mu2)
 
@@ -327,6 +379,8 @@ def get_transit_time_after_refit(MSU_mDOMs_list,mdom_tt_dir):
                     chi2_values.append(chi2_original)
                     tt_diff.append(mu1 - b)
                     chi2_diff.append(reduced_chi2 - chi2_original)
+                    if abs(reduced_chi2 - chi2_original) > 20:
+                        print(f"Large chi2 difference for {mDOM_prod_id} channel {channel} run {run}: original chi2 {chi2_original:.1f}, refit chi2 {reduced_chi2:.1f}")
                 except RuntimeError:
                     print(f"Failed to fit double gaussian for {mDOM_prod_id} channel {channel}")
                     continue
@@ -346,6 +400,14 @@ def main() -> None:
     #selected files
     transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_select.json"
     ################################################################################
+    ##########run picks file###########
+    run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
+    refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_tt_needing_refit.json"
+    empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
+
+
+
+
     MSU_mDOMs_list = extract_json_mdom_pmt_list(transit_time_file,site="MSU")
     #msu mdoms
     print(f"msu mdoms: {len(MSU_mDOMs_list)}")
@@ -354,20 +416,35 @@ def main() -> None:
 
 
     # plot_single_transit_time_histogram_refit("mDOM_M134", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
-    plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M134", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
-    plot_single_transit_time_histogram_refit_single_gaussian("mDOM_M134", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[427,424])#Run 427 very off
+    plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M134", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    plot_single_transit_time_histogram_refit_single_gaussian("mDOM_M134", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
 
-    plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M139", 9, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[])#Run 427 very off
-    plot_single_transit_time_histogram_refit_single_gaussian("mDOM_M139", 9, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[])#Run 427 very off
+    plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M139", 9, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    plot_single_transit_time_histogram_refit_single_gaussian("mDOM_M139", 9, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
     # for device in MSU_mDOMs_list:
     #     mdom, channel = device
     #     channel = channel.split("_")[-1]
     #     plot_single_transit_time_histogram_refit_double_gaussian(mdom, int(channel), mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[])#Run 427 very off
-    refit_tt,refit_tt2,original_tt, chi2_values, chi2_refit, tt_diff, chi2_diff =    get_transit_time_after_refit(MSU_mDOMs_list[:],mdom_tt_dir)
-    plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt, plotFolder)
-    plot_chi2_diff_hist_after_refit(chi2_diff, plotFolder)
-    plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder)
-    plot_chi2_scatter_after_refit(chi2_values, chi2_refit, plotFolder)
+    ####################################
+    ##########total refit results##########
+    # refit_tt,refit_tt2,original_tt, chi2_values, chi2_refit, tt_diff, chi2_diff =    get_transit_time_after_refit(MSU_mDOMs_list[:],mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=None)
+    # plot_transit_time_hist_after_refit(refit_tt,refit_tt2, original_tt,bins=np.linspace(40,80,81), plotFolder=plotFolder)
+    # plot_chi2_diff_hist_after_refit(chi2_diff, plotFolder)
+    # plot_transit_time_diff_hist_after_refit(tt_diff, plotFolder,bins=np.linspace(-5,5,11))
+    # plot_chi2_scatter_after_refit(chi2_values, chi2_refit, plotFolder)
+    #######################
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M083", 17, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M006", 16, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M149", 12, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M149", 16, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M182", 13, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M093", 3, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[557])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M093", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[557])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M085", 23, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M083", 4, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    # plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M083", 13, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[])#Run 427 very off
+    plot_single_transit_time_histogram_refit_double_gaussian("mDOM_M055", 13, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],include_runs=[1443])#Run 427 very off
+    plot_single_transit_time_histogram("mDOM_M055", 13, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],exclude_runs=[1434,1435,1433,1441,1436,1122,1440])#Run 427 very off
 
     
 

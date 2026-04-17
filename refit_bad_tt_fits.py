@@ -157,6 +157,9 @@ def main():
     plot_refit_pmt("mDOM_D029_Ch1", mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],ylim=None,exclude_runs=[],remove_pedestal=0)
     plot_refit_pmt("mDOM_D034_Ch21", mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],ylim=None,exclude_runs=[],remove_pedestal=0)
     plot_refit_pmt("mDOM_D092_Ch1", mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],ylim=None,exclude_runs=[],remove_pedestal=None,merge_bins=2)
+    #slightly off
+    plot_refit_pmt("mDOM_D089_Ch18", mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],ylim=None,exclude_runs=[],remove_pedestal=None,merge_bins=None)
+    plot_refit_pmt("mDOM_M182_Ch13", mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[40,80],ylim=None,exclude_runs=[],remove_pedestal=None,merge_bins=None)
 
 if __name__ == "__main__":
     main()

@@ -522,6 +522,21 @@ def main() -> None:
     plot_single_transit_time_histogram("mDOM_M063", 7, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
     plot_single_transit_time_histogram("mDOM_M063", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
     #################################################################
+    #fringe fit checking
+    plot_single_transit_time_histogram("mDOM_D090",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D090",12,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D090",16,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D090",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D090",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D090",23,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D084",1,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D176",15,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D089",18,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D070",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_D211",10,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_M173",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
+    plot_single_transit_time_histogram("mDOM_M093",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[658,629,649,562,128,647,135,657])
+
 
 
     
