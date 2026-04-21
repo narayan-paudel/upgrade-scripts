@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from scipy.special import erfc
+from scipy.special import erf,erfc
+from scipy.stats import chi2
 
 
 from pathlib import Path
@@ -23,6 +24,45 @@ from refit_bad_tt_fits import merge_bins_reduceat
 # Physically: instrument response (Gaussian) convolved with
 # an exponential decay — common in fluorescence lifetime, kinetics
 # -------------------------------------------------------------------
+
+
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["mathtext.fontset"] = "dejavuserif"
+plt.rcParams.update({'font.size': 10})
+
+
+# colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']
+colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f','#1f78b4','#33a02c','#e31a1c','#a6cee3','#b2df8a','#fb9a99','#fdbf6f','#ff7f00','#cab2d6','#ffff99','#6a3d9a','#b15928','#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02','#a6761d','#666666','#1f78b4']
+
+#Dark theme palattee
+C = dict(
+    bg      = "#0f1117",
+    panel   = "#161b27",
+    grid    = "#1e2533",
+    text    = "#e2e8f0",
+    muted   = "#64748b",
+    hist    = "#334155",
+    fit     = "#a78bfa",   # violet  – total fit
+    rise    = "#38bdf8",   # sky     – Gaussian CDF rise envelope
+    decay   = "#fb923c",   # amber   – exponential decay envelope
+    resid   = "#34d399",   # emerald – residuals
+    err     = "#f87171",   # red     – ±1σ band
+)
+
+
+
+
+def gaussian(x, A, mu, sigma):
+    return A * np.exp(-(x - mu)**2 / (2 * sigma**2))
+
+
+def double_gaussian(x, A1, mu1, sigma1, A2, mu2, sigma2):
+    return A1 * np.exp(-(x - mu1)**2 / (2 * sigma1**2)) + A2 * np.exp(-(x - mu2)**2 / (2 * sigma2**2))
+
+
+def triple_gaussian(x, A1, mu1, sigma1, A2, mu2, sigma2, A3, mu3, sigma3):
+    return A1 * np.exp(-(x - mu1)**2 / (2 * sigma1**2)) + A2 * np.exp(-(x - mu2)**2 / (2 * sigma2**2)) + A3 * np.exp(-(x - mu3)**2 / (2 * sigma3**2))
+
 
 def gaussian_rise_exp_decay(t, A, t0, sigma, tau):
     """
@@ -65,6 +105,163 @@ def gaussian_rise_exp_decay_simple(t, A, t0, sigma, tau, offset):
     rise = 0.5 * (1 + erf((t - t0) / (np.sqrt(2) * sigma)))  # Gaussian CDF
     decay = np.exp(-np.maximum(t - t0, 0) / tau)              # causal exponential
     return A * rise * decay + offset
+
+
+def gaussian_rise(t,A,t0,sigma):
+    """
+    Simpler empirical version (not analytically convolved):
+    Rise shaped by Gaussian CDF, decay by exponential.
+
+    Useful when you want an intuitive parameterization.
+
+    Parameters:
+        t      : time array
+        A      : amplitude
+        t0     : onset time
+        sigma  : rise width
+        tau    : decay time constant
+        offset : baseline offset
+    """
+    from scipy.special import erf 
+    return 0.5 * (1 + erf((t - t0) / (np.sqrt(2) * sigma)))
+
+def exp_decay_simple(t, A, t0, tau):
+    """
+    Simpler empirical version (not analytically convolved):
+    Rise shaped by Gaussian CDF, decay by exponential.
+
+    Useful when you want an intuitive parameterization.
+
+    Parameters:
+        t      : time array
+        A      : amplitude
+        t0     : onset time
+        sigma  : rise width
+        tau    : decay time constant
+        offset : baseline offset
+    """
+    return A*np.exp(-np.maximum(t - t0, 0) / tau)
+
+
+def gaussian_cdf(t, mu, sigma):
+    """Smooth 0→1 rise (error-function CDF)."""
+    return 0.5 * (1.0 + erf((t - mu) / (np.sqrt(2.0) * sigma)))
+ 
+ 
+def exp_decay(t, mu, tau):
+    """Exponential decay anchored at t = mu."""
+    d = np.ones_like(t, dtype=float)
+    mask = t >= mu
+    d[mask] = np.exp(-(t[mask] - mu) / tau)
+    return d
+ 
+ 
+def gaussian_rise_exponential_decay(t, A, mu, sigma, tau):
+    """
+    Full waveform: amplitude × Gaussian-CDF rise × Exponential decay.
+    Parameters
+    ----------
+    A     : peak amplitude scale
+    mu    : onset / peak position
+    sigma : rise width  (Gaussian σ)
+    tau   : decay time-constant
+    """
+    return A * gaussian_cdf(t, mu, sigma) * exp_decay(t, mu, tau)
+
+
+def plot_gaussian_rise_exponential_decay_fit(x_values, data,plotFolder):
+    x = np.array(x_values)
+    data = np.array(data)
+    peak_bin = x[np.argmax(data)]
+
+    p0 = [data.max()*1.2, 55,3, 5]  # A, mu, sigma, tau
+
+    # Bounds: all positive, t0 within data range
+    bounds = (
+        [data.max()*0.3, 45, 1,- np.inf],   # lower
+        [data.max()*1.2,  65, 5, np.inf],  # upper
+    )
+    poisson_errors = np.sqrt(np.maximum(np.asarray(data),1))
+
+    popt, pcov = curve_fit(
+        gaussian_rise_exponential_decay,
+        x, data,
+        p0=p0,
+        bounds=bounds,
+        maxfev=10000,
+        sigma=poisson_errors,
+        absolute_sigma=True
+    )
+
+    # popt, pcov = curve_fit(
+    #     gaussian_rise_exp_decay,
+    #     p0=p0,
+    #     maxfev=10000,
+    # )
+
+    perr = np.sqrt(np.diag(pcov))  # 1-sigma uncertainties
+
+    A_fit, t0_fit, sigma_fit, tau_fit = popt
+
+    ############################
+    perr = np.sqrt(np.diag(pcov))
+    perr_dof = perr / np.sqrt(len(x_values) - len(popt))
+    chi2_val = np.sum(((data - gaussian_rise_exponential_decay(x_values, *popt))/poisson_errors)**2)
+    ndof = len(x_values) - len(popt)
+    reduced_chi2 = chi2_val / ndof
+    p_value   = 1.0 - chi2.cdf(chi2_val, ndof)
+
+
+    # -------------------------------------------------------------------
+    # Plot
+    # -------------------------------------------------------------------
+    y_fit = gaussian_rise_exponential_decay(x_values, *popt)
+    residuals = data - y_fit
+    RSS = np.sum(residuals**2)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 7),
+                                    gridspec_kw={'height_ratios': [3, 1]})
+
+    # Main plot
+    ax1.errorbar(x_values, data, yerr=poisson_errors, fmt='o', color=colorsCustom[0], label=f"transit time")
+    fit_x_values = np.linspace(x_values.min(), x_values.max(), 400)
+    ax1.plot(fit_x_values, gaussian_rise_exponential_decay(fit_x_values, *popt),  '-',c=colorsCustom[1],  linewidth=2,   label=f'gauss rise, expon decay \nRSS = {RSS:.0f}, χ² = {reduced_chi2:.1f}')
+    ax1.plot(fit_x_values, A_fit * gaussian_cdf(fit_x_values, t0_fit, sigma_fit),  '-',c=colorsCustom[2],  linewidth=2,   label=rf"A:{A_fit:.0f}, $\mu$:{t0_fit:.0f}, $\sigma$:{sigma_fit:.0f}")
+    ax1.plot(fit_x_values, A_fit * exp_decay(fit_x_values, t0_fit, tau_fit),  '-',c=colorsCustom[3],  linewidth=2,   label=rf"A:{A_fit:.0f}, $\mu$:{t0_fit:.0f}, $\tau$:{tau_fit:.0f}")
+    ax1.set_ylabel('Count', fontsize=22)
+    ax1.set_title('Gaussian Rise Exponential Decay Fit', fontsize=22)
+    ax1.legend(fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax1.set_ylabel('Count', fontsize=22)
+    ax1.set_title('Gaussian Rise Exponential Decay Fit', fontsize=22)
+    ax1.legend(fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # Annotate fitted params
+    # param_text = (f"A = {A_fit:.3f} ± {perr[0]:.3f}\n"
+    #             f"t₀ = {t0_fit:.3f} ± {perr[1]:.3f}\n"
+    #             f"σ = {sigma_fit:.3f} ± {perr[2]:.3f}\n"
+    #             f"τ = {tau_fit:.3f} ± {perr[3]:.3f}")
+    # ax1.text(0.97, 0.95, param_text, transform=ax1.transAxes,
+    #         fontsize=10, va='top', ha='right',
+    #         bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+    # Residuals
+    ax2.errorbar(x_values, residuals, yerr=poisson_errors, fmt='o', color=colorsCustom[0], alpha=1)
+    ax2.axhline(0, color=colorsCustom[1], linewidth=2)
+    ax2.set_xlabel('Transit times [ns]', fontsize=22)
+    ax2.set_ylabel('Residuals', fontsize=22)
+    ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    plt.tight_layout()
+    plt.savefig(plotFolder + '/gaussian_rise_exponential_decay_residuals.pdf', dpi=150)
+    plt.close()
+
+
+
+
+
 
 def get_transit_time_data(mDOM_prod_id, channel,mdom_tt_dir,run_picks_json,need_refits_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=None):
     refit_tt = []
@@ -129,6 +326,8 @@ def get_transit_time_data(mDOM_prod_id, channel,mdom_tt_dir,run_picks_json,need_
             if merge_bins is not None:
                 y_values, x_values = merge_bins_reduceat(y_values, x_values, n=merge_bins)
     return x_values, y_values
+
+
 
 def plot_model_fit(x, data,plotFolder):
 
@@ -197,10 +396,13 @@ def plot_model_fit(x, data,plotFolder):
     # Main plot
     ax1.errorbar(x, data, yerr=poisson_errors, fmt='o', color='steelblue', alpha=0.5, label="transit time")
     ax1.plot(x, y_fit,  'r-',  linewidth=2,   label='Fit')
+    ax1.plot(x, gaussian_rise(x, A_fit, t0_fit, sigma_fit),  'g-',  linewidth=2,   label='Gaussian Rise')
+    ax1.plot(x, exp_decay_simple(x, A_fit, t0_fit, tau_fit),  'b-',  linewidth=2,   label='Exponential Decay')
     ax1.set_ylabel('Count', fontsize=12)
     ax1.set_title('Gaussian Rise + Exponential Decay Fit', fontsize=13)
     ax1.legend(fontsize=11)
     ax1.grid(True, alpha=0.3)
+    ax1.set_ylim(0,400)
 
     # Annotate fitted params
     param_text = (f"A = {A_fit:.3f} ± {perr[0]:.3f}\n"
@@ -219,8 +421,223 @@ def plot_model_fit(x, data,plotFolder):
     ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(plotFolder + '/gaussian_rise_exp_decay_fit.png', dpi=150)
+    plt.savefig(plotFolder + '/gaussian_rise_exp_decay_fit.pdf', dpi=150)
     plt.close()
+
+
+
+def plot_triple_gaussian_fit_residual(x_values, data,plotFolder):
+
+    initial_guess = [np.max(data), 55, 3, np.max(data)/1.5, 55, 3,np.max(data)/1.5, 55, 3]
+    # bounds = ([0, 30, 0.1,0, 30, 0.1], #lower limits
+    #            [np.max(y_values)+100, 80, 6,np.max(y_values)+100, 80, 6])      # upper limits
+    bounds = ([0.5*np.max(data), 45, 0.1,0, 45, 0.1,0, 45, 0.1], #lower limits
+                [np.max(data)+100, 65, 5,np.max(data)+100, 65, 5,np.max(data)+100, 65, 5])      # upper limits
+
+
+    poisson_errors = np.sqrt(np.asarray(data))
+    poisson_errors[poisson_errors == 0] = 1
+
+    popt, pcov = curve_fit(
+        triple_gaussian,
+        x_values, data,
+        p0=initial_guess,
+        bounds=bounds,
+        maxfev=10000,
+        sigma=poisson_errors,
+        absolute_sigma=True
+    )
+
+    perr = np.sqrt(np.diag(pcov))
+    perr_dof = perr / np.sqrt(len(x_values) - len(popt))
+    chi2 = np.sum(((data - triple_gaussian(x_values, *popt))/poisson_errors)**2)
+    ndof = len(x_values) - len(popt)
+    reduced_chi2 = chi2 / ndof
+    A1, mu1, sigma1, A2, mu2, sigma2, A3, mu3, sigma3 = popt
+
+    # -------------------------------------------------------------------
+    # Plot
+    # -------------------------------------------------------------------
+    y_fit = triple_gaussian(x_values, *popt)
+    residuals = data - y_fit
+    RSS = np.sum(residuals**2)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 7),
+                                    gridspec_kw={'height_ratios': [3, 1]})
+
+    # Main plot
+    ax1.errorbar(x_values, data, yerr=poisson_errors, fmt='o', color=colorsCustom[0], label=f"transit time")
+    fit_x_values = np.linspace(x_values.min(), x_values.max(), 400)
+    ax1.plot(fit_x_values, triple_gaussian(fit_x_values, *popt),  '-',c=colorsCustom[1],  linewidth=2,   label=f'triple Gaussian Fit\nRSS = {RSS:.0f}, χ² = {reduced_chi2:.1f}')
+    ax1.plot(fit_x_values, gaussian(fit_x_values, A1, mu1, sigma1),  '-',c=colorsCustom[2],  linewidth=2,   label=rf"A$_{{{1}}}$:{A1:.0f}, $\mu_{{{1}}}$:{mu1:.0f}, $\sigma_{{{1}}}$:{sigma1:.0f}")
+    ax1.plot(fit_x_values, gaussian(fit_x_values, A2, mu2, sigma2),  '-',c=colorsCustom[3],  linewidth=2,   label=rf"A$_{{{2}}}$:{A2:.0f}, $\mu_{{{2}}}$:{mu2:.0f}, $\sigma_{{{2}}}$:{sigma2:.0f}")
+    ax1.plot(fit_x_values, gaussian(fit_x_values, A3, mu3, sigma3),  '-',c=colorsCustom[4],  linewidth=2,   label=rf"A$_{{{3}}}$:{A3:.0f}, $\mu_{{{3}}}$:{mu3:.0f}, $\sigma_{{{3}}}$:{sigma3:.0f}")
+    ax1.set_ylabel('Count', fontsize=22)
+    ax1.set_title('triple gaussian Fit', fontsize=22)
+    ax1.legend(fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # Annotate fitted params
+    # param_text = (f"A = {A_fit:.3f} ± {perr[0]:.3f}\n"
+    #             f"t₀ = {t0_fit:.3f} ± {perr[1]:.3f}\n"
+    #             f"σ = {sigma_fit:.3f} ± {perr[2]:.3f}\n"
+    #             f"τ = {tau_fit:.3f} ± {perr[3]:.3f}")
+    # ax1.text(0.97, 0.95, param_text, transform=ax1.transAxes,
+    #         fontsize=10, va='top', ha='right',
+    #         bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+    # Residuals
+    ax2.errorbar(x_values, residuals, yerr=poisson_errors, fmt='o', color=colorsCustom[0], alpha=1)
+    ax2.axhline(0, color=colorsCustom[1], linewidth=2)
+    ax2.set_xlabel('Transit times [ns]', fontsize=22)
+    ax2.set_ylabel('Residuals', fontsize=22)
+    ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    plt.tight_layout()
+    plt.savefig(plotFolder + '/triple_gaussian_fit_residuals.pdf', dpi=150)
+    plt.close()
+
+def plot_double_gaussian_fit_residual(x_values, data,plotFolder):
+
+    initial_guess = [np.max(data), 55, 3, np.max(data)/1.5, 55, 3]
+    # bounds = ([0, 30, 0.1,0, 30, 0.1], #lower limits
+    #            [np.max(y_values)+100, 80, 6,np.max(y_values)+100, 80, 6])      # upper limits
+    bounds = ([0.5*np.max(data), 45, 0.1,0, 45, 0.1], #lower limits
+                [np.max(data)+100, 65, 5,np.max(data)+100, 65, 5])      # upper limits
+
+
+    poisson_errors = np.sqrt(np.asarray(data))
+    poisson_errors[poisson_errors == 0] = 1
+
+    popt, pcov = curve_fit(
+        double_gaussian,
+        x_values, data,
+        p0=initial_guess,
+        bounds=bounds,
+        maxfev=10000,
+        sigma=poisson_errors,
+        absolute_sigma=True
+    )
+
+    perr = np.sqrt(np.diag(pcov))
+    perr_dof = perr / np.sqrt(len(x_values) - len(popt))
+    chi2 = np.sum(((data - double_gaussian(x_values, *popt))/poisson_errors)**2)
+    ndof = len(x_values) - len(popt)
+    reduced_chi2 = chi2 / ndof
+    A1, mu1, sigma1, A2, mu2, sigma2 = popt
+
+    # -------------------------------------------------------------------
+    # Plot
+    # -------------------------------------------------------------------
+    y_fit = double_gaussian(x_values, *popt)
+    residuals = data - y_fit
+    RSS = np.sum(residuals**2)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 7),
+                                    gridspec_kw={'height_ratios': [3, 1]})
+
+    # Main plot
+    ax1.errorbar(x_values, data, yerr=poisson_errors, fmt='o', color=colorsCustom[0], label=f"transit time")
+    fit_x_values = np.linspace(x_values.min(), x_values.max(), 400)
+    ax1.plot(fit_x_values, double_gaussian(fit_x_values, *popt),  '-',c=colorsCustom[1],  linewidth=2,   label=f'double Gaussian Fit\nRSS = {RSS:.0f}, χ² = {reduced_chi2:.1f}')
+    ax1.plot(fit_x_values, gaussian(fit_x_values, A1, mu1, sigma1),  '-',c=colorsCustom[2],  linewidth=2,   label=rf"A$_{{{1}}}$:{A1:.0f}, $\mu_{{{1}}}$:{mu1:.0f}, $\sigma_{{{1}}}$:{sigma1:.0f}")
+    ax1.plot(fit_x_values, gaussian(fit_x_values, A2, mu2, sigma2),  '-',c=colorsCustom[3],  linewidth=2,   label=rf"A$_{{{2}}}$:{A2:.0f}, $\mu_{{{2}}}$:{mu2:.0f}, $\sigma_{{{2}}}$:{sigma2:.0f}")
+    ax1.set_ylabel('Count', fontsize=22)
+    ax1.set_title('double gaussian Fit', fontsize=22)
+    ax1.legend(fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # Annotate fitted params
+    # param_text = (f"A = {A_fit:.3f} ± {perr[0]:.3f}\n"
+    #             f"t₀ = {t0_fit:.3f} ± {perr[1]:.3f}\n"
+    #             f"σ = {sigma_fit:.3f} ± {perr[2]:.3f}\n"
+    #             f"τ = {tau_fit:.3f} ± {perr[3]:.3f}")
+    # ax1.text(0.97, 0.95, param_text, transform=ax1.transAxes,
+    #         fontsize=10, va='top', ha='right',
+    #         bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+    # Residuals
+    ax2.errorbar(x_values, residuals, yerr=poisson_errors, fmt='o', color=colorsCustom[0], alpha=1)
+    ax2.axhline(0, color=colorsCustom[1], linewidth=2)
+    ax2.set_xlabel('Transit times [ns]', fontsize=22)
+    ax2.set_ylabel('Residuals', fontsize=22)
+    ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    plt.tight_layout()
+    plt.savefig(plotFolder + '/double_gaussian_fit_residual.pdf', dpi=150)
+    plt.close()
+
+
+def plot_single_gaussian_fit_residual(x_values, data,plotFolder):
+
+    initial_guess = [np.max(data), 55, 3]
+    # bounds = ([0, 30, 0.1,0, 30, 0.1], #lower limits
+    #            [np.max(y_values)+100, 80, 6,np.max(y_values)+100, 80, 6])      # upper limits
+    bounds = ([0.5*np.max(data), 45, 0.1], #lower limits
+                [np.max(data)+100, 65, 5])      # upper limits
+
+
+    poisson_errors = np.sqrt(np.asarray(data))
+    poisson_errors[poisson_errors == 0] = 1
+
+    popt, pcov = curve_fit(
+        gaussian,
+        x_values, data,
+        p0=initial_guess,
+        bounds=bounds,
+        maxfev=10000,
+        sigma=poisson_errors,
+        absolute_sigma=True
+    )
+
+    perr = np.sqrt(np.diag(pcov))
+    perr_dof = perr / np.sqrt(len(x_values) - len(popt))
+    chi2 = np.sum(((data - gaussian(x_values, *popt))/poisson_errors)**2)
+    ndof = len(x_values) - len(popt)
+    reduced_chi2 = chi2 / ndof
+    A1, mu1, sigma1 = popt
+
+    # -------------------------------------------------------------------
+    # Plot
+    # -------------------------------------------------------------------
+    y_fit = gaussian(x_values, *popt)
+    residuals = data - y_fit
+    RSS = np.sum(residuals**2)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 7),
+                                    gridspec_kw={'height_ratios': [3, 1]})
+
+    # Main plot
+    ax1.errorbar(x_values, data, yerr=poisson_errors, fmt='o', color=colorsCustom[0], label=f"transit time")
+    fit_x_values = np.linspace(x_values.min(), x_values.max(), 400)
+    ax1.plot(fit_x_values, gaussian(fit_x_values, *popt),  '-',c=colorsCustom[1],  linewidth=2,   label=rf'Gaussian Fit A$_{{{1}}}$:{A1:.0f}, $\mu_{{{1}}}$:{mu1:.0f}, $\sigma_{{{1}}}$:{sigma1:.0f}'+'\n'+f'RSS = {RSS:.0f}, χ² = {reduced_chi2:.1f}')
+    ax1.set_ylabel('Count', fontsize=22)
+    ax1.set_title('gaussian Fit', fontsize=22)
+    ax1.legend(fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    # Annotate fitted params
+    # param_text = (f"A = {A_fit:.3f} ± {perr[0]:.3f}\n"
+    #             f"t₀ = {t0_fit:.3f} ± {perr[1]:.3f}\n"
+    #             f"σ = {sigma_fit:.3f} ± {perr[2]:.3f}\n"
+    #             f"τ = {tau_fit:.3f} ± {perr[3]:.3f}")
+    # ax1.text(0.97, 0.95, param_text, transform=ax1.transAxes,
+    #         fontsize=10, va='top', ha='right',
+    #         bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+    # Residuals
+    ax2.errorbar(x_values, residuals, yerr=poisson_errors, fmt='o', color=colorsCustom[0], alpha=1)
+    ax2.axhline(0, color=colorsCustom[1], linewidth=2)
+    ax2.set_xlabel('Transit times [ns]', fontsize=22)
+    ax2.set_ylabel('Residuals', fontsize=22)
+    ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    plt.tight_layout()
+    plt.savefig(plotFolder + '/gaussian_fit_residuals.pdf', dpi=150)
+    plt.close()
+
+
+
 
 def main():
     upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
@@ -245,6 +662,8 @@ def main():
     x_values, y_values = get_transit_time_data("mDOM_M055", 13,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=None)
     plot_model_fit(x_values, y_values,plotFolder)
     x_values, y_values = get_transit_time_data("mDOM_M134", 5,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=None)
+    plot_model_fit(x_values, y_values,plotFolder)
+    x_values, y_values = get_transit_time_data("mDOM_M083", 13,mdom_tt_dir,run_picks_json,refit_json,empty_meas_json,site_str="_M",filter_non_zero=False,check_outliers=None)
     plot_model_fit(x_values, y_values,plotFolder)
 
 

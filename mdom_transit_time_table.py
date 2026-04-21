@@ -20,60 +20,9 @@ plt.rcParams["font.family"] = "serif"
 plt.rcParams["mathtext.fontset"] = "dejavuserif"
 plt.rcParams.update({'font.size': 10})
 
-plotFolder = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
-mdom_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/") if f.is_dir()][:]
-mdom_list_desy = []
-mdom_list_desy_dvt = []
-mdom_list_msu = []
-for ifile in mdom_list:
-    if ifile.split("/")[-1].split("_")[1][0]=="M":
-        mdom_list_msu.append(ifile)
-    elif "DVT" in ifile.split("/")[-1].split("_")[1]:
-        mdom_list_desy_dvt.append(ifile)
-    else:
-        mdom_list_desy.append(ifile)
 
 
-mdom_names = [istr.split("/")[-1] for istr in mdom_list]
 
-
-upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
-
-geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
-
-# print(geometry_files)
-
-# string_list = ["87","88","89","90","91","92"]
-string_list = ["88","89","90","91","92"]
-
-def get_device_list(string,device):
-    device_list = []
-    for ifile in geometry_files:
-        if string in ifile:
-            # print(f"ifile {ifile}")
-            with open(ifile, 'r') as f:
-                data = json.load(f)
-                # print(f"data {data[0]}")
-            for idev in data[0]["devices"]:
-                # print(f"this device #################################")
-                # print(f"idev {idev}")                
-                if device in idev["production_id"]:
-                    device_list.append(idev["production_id"])
-            # device_list.append(ifile.split("/")[-1].split("_")[0]+"_"+ifile.split("/")[-1].split("_")[1])
-    # print(f"device list for {device} on string {string} {len(device_list)} {device_list}")
-    return device_list
-
-# deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
-deployed_device_list = get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
-# print(f"device list {len(device_list)} {device_list}")
-
-print(f"deployed device in string 88 {len(get_device_list('88','mDOM'))}")
-print(f"deployed device in string 89 {len(get_device_list('89','mDOM'))}")
-print(f"deployed device in string 90 {len(get_device_list('90','mDOM'))}")
-print(f"deployed device in string 91 {len(get_device_list('91','mDOM'))}")
-print(f"deployed device in string 92 {len(get_device_list('92','mDOM'))}")
-
-print(f"deployed mDOM list {len(deployed_device_list)}")
 
 #############################################
 from customColors import qualitative_colors
@@ -555,38 +504,7 @@ def get_mdom_production_id(mdom_path_name):
     return mdom_path_name.split("/")[-1].split("_")[0]+"_"+mdom_path_name.split("/")[-1].split("_")[1]
 
 
-combined_mdom_list = mdom_list_msu + mdom_list_desy
-# combined_mean_plot(mdom_list_desy,mdom_list_msu)
-combined_mdom_list_deployed = [imdom for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list]
 
-deployed_mdom_missing_tt = [imdom for imdom in deployed_device_list if imdom not in [get_mdom_production_id(idom) for idom in combined_mdom_list]]
-deployed_mdom_missing_tt_icm_id = [prod_id_to_icm_id(imdom) for imdom in deployed_mdom_missing_tt]
-
-print(f"deployed mDOMs missing transit time measurement {len(deployed_mdom_missing_tt)} {deployed_mdom_missing_tt} {deployed_mdom_missing_tt_icm_id}")
-
-for prod_id, icm_id in zip(deployed_mdom_missing_tt, deployed_mdom_missing_tt_icm_id):
-    print(f"{prod_id} ({icm_id})")
-
-# print(f"total number of deployed mDOMs {len(combined_mdom_list_deployed)}")
-
-print(f"FAT mDOM list of deployed mDOMs has {len(combined_mdom_list_deployed)} entries")
-get_transit_time_dict(combined_mdom_list_deployed) #gives all runs of transit time measurement
-
-
-
-
-
-print(f"Combined mDOM list has {len(combined_mdom_list)} entries")
-
-
-
-# for imdom in combined_mdom_list:
-#     print(f"{imdom} has production id {get_mdom_production_id(imdom)}")
-
-print(f"deployed mdoms {len(deployed_device_list)} {len(combined_mdom_list)} {len([get_mdom_production_id(imdom) for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list])}")
-
-missing_FAT_entries = [imdom for imdom in deployed_device_list if get_mdom_production_id(imdom) not in [get_mdom_production_id(idom) for idom in combined_mdom_list]]
-print(f"missing FAT entries {len(missing_FAT_entries)} {missing_FAT_entries}")
 
 def get_mDOM_missing_channels(mdom_list):
     '''
@@ -654,6 +572,98 @@ def get_mDOM_missing_channels(mdom_list):
 
 
 get_mDOM_missing_channels(combined_mdom_list_deployed)
+
+def get_device_list(string,device):
+    device_list = []
+    for ifile in geometry_files:
+        if string in ifile:
+            # print(f"ifile {ifile}")
+            with open(ifile, 'r') as f:
+                data = json.load(f)
+                # print(f"data {data[0]}")
+            for idev in data[0]["devices"]:
+                # print(f"this device #################################")
+                # print(f"idev {idev}")                
+                if device in idev["production_id"]:
+                    device_list.append(idev["production_id"])
+            # device_list.append(ifile.split("/")[-1].split("_")[0]+"_"+ifile.split("/")[-1].split("_")[1])
+    # print(f"device list for {device} on string {string} {len(device_list)} {device_list}")
+    return device_list
+
+def main():
+    plotFolder = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
+    mdom_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/") if f.is_dir()][:]
+    mdom_list_desy = []
+    mdom_list_desy_dvt = []
+    mdom_list_msu = []
+    for ifile in mdom_list:
+        if ifile.split("/")[-1].split("_")[1][0]=="M":
+            mdom_list_msu.append(ifile)
+        elif "DVT" in ifile.split("/")[-1].split("_")[1]:
+            mdom_list_desy_dvt.append(ifile)
+        else:
+            mdom_list_desy.append(ifile)
+
+
+    mdom_names = [istr.split("/")[-1] for istr in mdom_list]
+
+
+    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+
+    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
+
+    # print(geometry_files)
+
+    # string_list = ["87","88","89","90","91","92"]
+    string_list = ["88","89","90","91","92"]
+
+
+    # deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+    deployed_device_list = get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+    # print(f"device list {len(device_list)} {device_list}")
+
+    print(f"deployed device in string 88 {len(get_device_list('88','mDOM'))}")
+    print(f"deployed device in string 89 {len(get_device_list('89','mDOM'))}")
+    print(f"deployed device in string 90 {len(get_device_list('90','mDOM'))}")
+    print(f"deployed device in string 91 {len(get_device_list('91','mDOM'))}")
+    print(f"deployed device in string 92 {len(get_device_list('92','mDOM'))}")
+
+    print(f"deployed mDOM list {len(deployed_device_list)}")
+    combined_mdom_list = mdom_list_msu + mdom_list_desy
+    # combined_mean_plot(mdom_list_desy,mdom_list_msu)
+    combined_mdom_list_deployed = [imdom for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list]
+
+    deployed_mdom_missing_tt = [imdom for imdom in deployed_device_list if imdom not in [get_mdom_production_id(idom) for idom in combined_mdom_list]]
+    deployed_mdom_missing_tt_icm_id = [prod_id_to_icm_id(imdom) for imdom in deployed_mdom_missing_tt]
+
+    print(f"deployed mDOMs missing transit time measurement {len(deployed_mdom_missing_tt)} {deployed_mdom_missing_tt} {deployed_mdom_missing_tt_icm_id}")
+
+    for prod_id, icm_id in zip(deployed_mdom_missing_tt, deployed_mdom_missing_tt_icm_id):
+        print(f"{prod_id} ({icm_id})")
+
+    # print(f"total number of deployed mDOMs {len(combined_mdom_list_deployed)}")
+
+    print(f"FAT mDOM list of deployed mDOMs has {len(combined_mdom_list_deployed)} entries")
+    get_transit_time_dict(combined_mdom_list_deployed) #gives all runs of transit time measurement
+
+
+
+
+
+    print(f"Combined mDOM list has {len(combined_mdom_list)} entries")
+
+
+
+    # for imdom in combined_mdom_list:
+    #     print(f"{imdom} has production id {get_mdom_production_id(imdom)}")
+
+    print(f"deployed mdoms {len(deployed_device_list)} {len(combined_mdom_list)} {len([get_mdom_production_id(imdom) for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list])}")
+
+    missing_FAT_entries = [imdom for imdom in deployed_device_list if get_mdom_production_id(imdom) not in [get_mdom_production_id(idom) for idom in combined_mdom_list]]
+    print(f"missing FAT entries {len(missing_FAT_entries)} {missing_FAT_entries}")
+
+if __name__ == "__main__":
+    main()
 
 
 # print(f" 87 {get_device_list("87","mDOM")}")
