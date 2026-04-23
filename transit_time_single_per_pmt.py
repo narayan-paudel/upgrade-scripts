@@ -134,25 +134,31 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                             available_runs = [itt["run_number"] for itt in tt_data["transit_times"][ichannel]]
 
                             # print(f"select channel run data for {mdom} channel {ichannel}: {select_run} {available_runs}")
-                            tt = [itt["b"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
-                            tts = [itt["c"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            mu = [itt["mu"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            sigma = [itt["sigma"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            a = [itt["a"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            b = [itt["b"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            c = [itt["c"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
                             chi2 = [itt["chi2"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            applied_hv = [itt["applied HV"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            temperature = [itt["temperature"] for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
+                            tt_info = [itt for itt in tt_data["transit_times"][ichannel] if int(itt["run_number"]) == int(select_run)]
 
                             # print(f"tt data for {mdom} channel {ichannel} select runs: {tt}")
-                            if len(tt) > 0:
-                                if abs(tt[0])>150:
-                                    print(f"transit time data for {mdom} channel {ichannel} {select_run} select runs: {tt}")
+                            if len(b) > 0:
+                                if abs(b[0])>150:
+                                    print(f"transit time data for {mdom} channel {ichannel} {select_run} select runs: {b[0]}")
                                 # print(f"transit time data for {mdom} channel {ichannel} select runs: {tt}")
-                                mu_list.append(tt[0])
-                                sigma_list.append(tts[0])
+                                mu_list.append(b[0])
+                                sigma_list.append(c[0])
                                 chi2_list.append(chi2[0])
                                 if check_outliers:
-                                    if tt[0] < check_outliers[0]:
+                                    if b[0] < check_outliers[0]:
                                         print(f"run picks data")
-                                        print(f"transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {tt[0]:.1f} ns")
-                                    if tt[0]>check_outliers[1]:
+                                        print(f"transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {b[0]:.1f} ns")
+                                    if b[0]>check_outliers[1]:
                                         print(f"run picks data")
-                                        print(f"large transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {tt[0]:.1f} ns")
+                                        print(f"large transit time data for {mdom} channel {int(ichannel.split('_')[-1])} {select_run} select runs: {b[0]:.1f} ns")
                                 if mdom+ f"_{int(ichannel.split('_')[-1])}" not in mdom_list_collection_checker:
                                     mdom_list_collection_checker.append(mdom+ f"_{int(ichannel.split('_')[-1])}")
                                     mdom_collection_checker.append(mdom)
@@ -160,6 +166,7 @@ def extract_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                                     print(f"DUPLICATED ENTRY IN COLLECTION CHECKER, CHECK CODE {mdom} channel {ichannel}")
                 else:
                     for ichannel in np.linspace(0,23,24):
+                        print(f"tt info for {mdom} channel {ichannel} {tt}")
                         if mdom+ f"_{int(ichannel)}" in need_refits_data_mdoms_pmt:
                             A1, mu1, sigma1, reduced_chi2 = get_single_gaussian_fit(mdom, int(ichannel), mdom_tt_dir)
                             mu_list.append(mu1)

@@ -573,7 +573,7 @@ def get_mDOM_missing_channels(mdom_list):
 
 get_mDOM_missing_channels(combined_mdom_list_deployed)
 
-def get_device_list(string,device):
+def get_device_list(string,device,geometry_files):
     device_list = []
     for ifile in geometry_files:
         if string in ifile:
@@ -619,14 +619,14 @@ def main():
 
 
     # deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
-    deployed_device_list = get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+    deployed_device_list = get_device_list("88","mDOM",geometry_files) + get_device_list("89","mDOM",geometry_files) + get_device_list("90","mDOM",geometry_files) + get_device_list("91","mDOM",geometry_files) + get_device_list("92","mDOM",geometry_files)
     # print(f"device list {len(device_list)} {device_list}")
 
-    print(f"deployed device in string 88 {len(get_device_list('88','mDOM'))}")
-    print(f"deployed device in string 89 {len(get_device_list('89','mDOM'))}")
-    print(f"deployed device in string 90 {len(get_device_list('90','mDOM'))}")
-    print(f"deployed device in string 91 {len(get_device_list('91','mDOM'))}")
-    print(f"deployed device in string 92 {len(get_device_list('92','mDOM'))}")
+    print(f"deployed device in string 88 {len(get_device_list('88','mDOM',geometry_files))}")
+    print(f"deployed device in string 89 {len(get_device_list('89','mDOM',geometry_files))}")
+    print(f"deployed device in string 90 {len(get_device_list('90','mDOM',geometry_files))}")
+    print(f"deployed device in string 91 {len(get_device_list('91','mDOM',geometry_files))}")
+    print(f"deployed device in string 92 {len(get_device_list('92','mDOM',geometry_files))}")
 
     print(f"deployed mDOM list {len(deployed_device_list)}")
     combined_mdom_list = mdom_list_msu + mdom_list_desy
