@@ -125,6 +125,40 @@ def plot_transit_time_proxy_histogram(transit_times_msu, transit_times_desy, plo
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
     plt.close()
 
+def plot_transit_time_histogram_DESY(transit_times_desy, plot_name,bins=200,xlim=[45,65]) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.hist(transit_times_desy, bins=bins,histtype='step',color=colorsCustom[1],linewidth=1.5 ,label=r'DESY tt', alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r"time [ns]", fontsize=22)
+    ax.set_ylabel(r"count", fontsize=22)
+    ax.set_yscale('log')
+    ax.text(0.95, 0.85, fr"DESY tt: {np.mean(transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
+    ax.grid(True,alpha=0.6)
+    ax.set_xlim(xlim[0],xlim[1])
+    ax.legend(fontsize=12,ncols=1)
+    plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_transit_time_spread_histogram_DESY(transit_times_spread_desy, plot_name,bins=200,xlim=[0,5]) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.hist(transit_times_spread_desy, bins=bins,histtype='step',color=colorsCustom[1],linewidth=1.5 ,label=r'DESY tts', alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r"time [ns]", fontsize=22)
+    ax.set_ylabel(r"count", fontsize=22)
+    ax.set_yscale('log')
+    ax.text(0.95, 0.85, fr"DESY tt: {np.mean(transit_times_spread_desy):.1f}"+r"$\pm$" + fr" {np.std(transit_times_spread_desy):.1f}  ns", transform=ax.transAxes, ha='right', va='top')
+    ax.grid(True,alpha=0.6)
+    ax.set_xlim(xlim[0],xlim[1])
+    ax.legend(fontsize=12,ncols=1)
+    plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
 
 def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[-10,4*10**5],no_component=None) -> None:
     fig = plt.figure(figsize=(8,5))
@@ -191,5 +225,9 @@ def main() -> None:
     # plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(0,20,41),xlim=[0,20])
     plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.05*10**6],no_component=True)
     plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final_components",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.05*10**6],no_component=None)
+    ####getting mean value of tt and tts from DESY
+    plot_transit_time_histogram_DESY(transit_times_single_per_pmt_desy_after_correction,plotFolder+"/transit_time_histogram_DESY",bins=np.linspace(20,40,41),xlim=[20,40])
+    transit_time_spread_single_per_pmt_desy_after_correction = extract_json_site(transit_times_single_per_pmt_file,site_str="_D",obj_key="sigma",filter_non_zero=False)
+    plot_transit_time_spread_histogram_DESY(transit_time_spread_single_per_pmt_desy_after_correction,plotFolder+"/transit_time_spread_histogram_DESY",bins=np.linspace(0,5,21),xlim=[0,5])
 if __name__ == "__main__":
     main()
