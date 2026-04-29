@@ -1,0 +1,426 @@
+{
+  "M001": {
+    "selected_run": 693
+  },
+  "M003": {
+    "selected_run": null,
+    "notes": "(need to check run list for best result)"
+  },
+  "M005": {
+    "selected_run": 771
+  },
+  "M006": {
+    "selected_run": 1091
+  },
+  "M007": {
+    "selected_run": 848
+  },
+  "M008": {
+    "selected_run": 627
+  },
+  "M010": {
+    "selected_run": 952
+  },
+  "M011": {
+    "selected_run": 469
+  },
+  "M012": {
+    "selected_run": 1024
+  },
+  "M013": {
+    "selected_run": 1391
+  },
+  "M014": {
+    "selected_run": 780
+  },
+  "M017": {
+    "selected_run": 1077
+  },
+  "M019": {
+    "selected_run": 852
+  },
+  "M021": {
+    "selected_run": 1392
+  },
+  "M024": {
+    "selected_run": 643
+  },
+  "M025": {
+    "selected_run": 685
+  },
+  "M026": {
+    "selected_run": 1134
+  },
+  "M028": {
+    "selected_run": 769
+  },
+  "M030": {
+    "selected_run": 1143
+  },
+  "M032": {
+    "selected_run": 1043
+  },
+  "M033": {
+    "selected_run": 843
+  },
+  "M035": {
+    "selected_run": 710
+  },
+  "M036": {
+    "selected_run": 1413
+  },
+  "M037": {
+    "selected_run": 1045
+  },
+  "M038": {
+    "selected_run": 687
+  },
+  "M039": {
+    "selected_run": 1079
+  },
+  "M040": {
+    "selected_run": 785
+  },
+  "M043": {
+    "selected_run": 738
+  },
+  "M044": {
+    "selected_run": 1141
+  },
+  "M045": {
+    "selected_run": 1059
+  },
+  "M048": {
+    "selected_run": 833
+  },
+  "M049": {
+    "selected_run": 1221
+  },
+  "M050": {
+    "selected_run": 1032
+  },
+  "M051": {
+    "selected_run": 1055
+  },
+  "M053": {
+    "selected_run": 1035
+  },
+  "M054": {
+    "selected_run": 1169
+  },
+  "M055": {
+    "selected_run": 1122
+  },
+  "M058": {
+    "selected_run": 1114
+  },
+  "M059": {
+    "selected_run": 792
+  },
+  "M060": {
+    "selected_run": 1426
+  },
+  "M061": {
+    "selected_run": 789
+  },
+  "M062": {
+    "selected_run": 1340
+  },
+  "M063": {
+    "selected_run": 1246
+  },
+  "M064": {
+    "selected_run": 533
+  },
+  "M065": {
+    "selected_run": 518
+  },
+  "M066": {
+    "selected_run": 547
+  },
+  "M068": {
+    "selected_run": 631
+  },
+  "M071": {
+    "selected_run": 634
+  },
+  "M072": {
+    "selected_run": 626
+  },
+  "M074": {
+    "selected_run": 1229
+  },
+  "M075": {
+    "selected_run": 622
+  },
+  "M080": {
+    "selected_run": 1347
+  },
+  "M082": {
+    "selected_run": 551
+  },
+  "M083": {
+    "selected_run": 1081
+  },
+  "M084": {
+    "selected_run": 805
+  },
+  "M085": {
+    "selected_run": 1025
+  },
+  "M086": {
+    "selected_run": 1283
+  },
+  "M088": {
+    "selected_run": 806
+  },
+  "M090": {
+    "selected_run": 1103
+  },
+  "M092": {
+    "selected_run": 1150
+  },
+  "M093": {
+    "selected_run": 629
+  },
+  "M094": {
+    "selected_run": 795
+  },
+  "M095": {
+    "selected_run": 779
+  },
+  "M096": {
+    "selected_run": 988
+  },
+  "M098": {
+    "selected_run": 986
+  },
+  "M099": {
+    "selected_run": 922
+  },
+  "M100": {
+    "selected_run": 858
+  },
+  "M101": {
+    "selected_run": 1054
+  },
+  "M105": {
+    "selected_run": 860
+  },
+  "M107": {
+    "selected_run": 1453
+  },
+  "M108": {
+    "selected_run": 512
+  },
+  "M109": {
+    "selected_run": 516
+  },
+  "M110": {
+    "selected_run": 1046
+  },
+  "M113": {
+    "selected_run": 940
+  },
+  "M114": {
+    "selected_run": 923
+  },
+  "M115": {
+    "selected_run": 981
+  },
+  "M116": {
+    "selected_run": 915
+  },
+  "M117": {
+    "selected_run": 1061
+  },
+  "M118": {
+    "selected_run": 1116
+  },
+  "M119": {
+    "selected_run": 1034
+  },
+  "M120": {
+    "selected_run": 1053
+  },
+  "M123": {
+    "selected_run": 1452
+  },
+  "M124": {
+    "selected_run": 735
+  },
+  "M125": {
+    "selected_run": 745
+  },
+  "M127": {
+    "selected_run": 1142
+  },
+  "M128": {
+    "selected_run": 999
+  },
+  "M130": {
+    "selected_run": 767
+  },
+  "M133": {
+    "selected_run": 763
+  },
+  "M134": {
+    "selected_run": 1037
+  },
+  "M136": {
+    "selected_run": 766
+  },
+  "M137": {
+    "selected_run": 1465
+  },
+  "M139": {
+    "selected_run": 1082
+  },
+  "M140": {
+    "selected_run": 920
+  },
+  "M143": {
+    "selected_run": 1052
+  },
+  "M145": {
+    "selected_run": 1078
+  },
+  "M146": {
+    "selected_run": 1033
+  },
+  "M147": {
+    "selected_run": 1342
+  },
+  "M148": {
+    "selected_run": 1307
+  },
+  "M149": {
+    "selected_run": 1014
+  },
+  "M150": {
+    "selected_run": 1084
+  },
+  "M151": {
+    "selected_run": 1003
+  },
+  "M153": {
+    "selected_run": 995
+  },
+  "M154": {
+    "selected_run": 1088
+  },
+  "M155": {
+    "selected_run": 1222
+  },
+  "M156": {
+    "selected_run": 976
+  },
+  "M157": {
+    "selected_run": 1160
+  },
+  "M159": {
+    "selected_run": 1151
+  },
+  "M160": {
+    "selected_run": 1196
+  },
+  "M161": {
+    "selected_run": 1000
+  },
+  "M162": {
+    "selected_run": 977
+  },
+  "M163": {
+    "selected_run": 1010
+  },
+  "M164": {
+    "selected_run": 1140
+  },
+  "M165": {
+    "selected_run": 1117
+  },
+  "M166": {
+    "selected_run": 1060
+  },
+  "M168": {
+    "selected_run": 966
+  },
+  "M169": {
+    "selected_run": 996
+  },
+  "M170": {
+    "selected_run": 1121
+  },
+  "M171": {
+    "selected_run": 948
+  },
+  "M173": {
+    "selected_run": 964
+  },
+  "M175": {
+    "selected_run": 838
+  },
+  "M176": {
+    "selected_run": 1170
+  },
+  "M177": {
+    "selected_run": 875
+  },
+  "M179": {
+    "selected_run": 1067
+  },
+  "M180": {
+    "selected_run": 846
+  },
+  "M182": {
+    "selected_run": 1012
+  },
+  "M183": {
+    "selected_run": 876
+  },
+  "M186": {
+    "selected_run": 1450
+  },
+  "M189": {
+    "selected_run": 1005
+  },
+  "M191": {
+    "selected_run": 1459
+  },
+  "M193": {
+    "selected_run": 896
+  },
+  "M194": {
+    "selected_run": 1148
+  },
+  "M195": {
+    "selected_run": 1040
+  },
+  "M196": {
+    "selected_run": 971
+  },
+  "M197": {
+    "selected_run": 969
+  },
+  "M198": {
+    "selected_run": 895
+  },
+  "M199": {
+    "selected_run": 975
+  },
+  "M200": {
+    "selected_run": 985
+  },
+  "M201": {
+    "selected_run": 1102
+  },
+  "M202": {
+    "selected_run": 839
+  },
+  "M203": {
+    "selected_run": 1001
+  },
+  "M204": {
+    "selected_run": 816
+  }
+}

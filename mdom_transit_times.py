@@ -7,6 +7,9 @@ import glob
 import json
 import argparse
 
+
+import numpy as np
+
 from pathlib import Path
 home = str(Path.home())
 
@@ -31,6 +34,27 @@ print("input file",args.input)
 with open(args.input,"r") as fh:
     mdom_list = json.load(fh)
 
+def get_device_list(string,device,geometry_files):
+    device_list = []
+    for ifile in geometry_files:
+        if string in ifile:
+            with open(ifile, 'r') as f:
+                data = json.load(f)
+            for idev in data[0]["devices"]:
+                if device in idev["production_id"]:
+                    device_list.append(idev["production_id"])
+    return device_list
+
+
+upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+
+geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
+deployed_device_list = (get_device_list("88","mDOM",geometry_files) + 
+get_device_list("89","mDOM",geometry_files) + 
+get_device_list("90","mDOM",geometry_files) + 
+get_device_list("91","mDOM",geometry_files) + 
+get_device_list("92","mDOM",geometry_files))
+
 # print(mdom_list)
 
 # mdom_exclude_list = ["mDOM_D032_v1","mDOM_D035_v1","mDOM_D036_v1",
@@ -51,7 +75,11 @@ mdom_duplicate_list = ["mDOM_D074_v1","mDOM_M030_v1","mDOM_M049_v1","mDOM_M063_v
 #                      "mDOM_D074_v1","mDOM_D075_v1","mDOM_D076_v1",
 #                      "mDOM_D079_v1","mDOM_M168_v1"]
 
-for idom in mdom_list[:]:
+deployed_mdom_list = [imdom for imdom in mdom_list if imdom.split('_v')[0] in deployed_device_list]
+
+print(f"{len(deployed_mdom_list)} out of {len(mdom_list)} are deployed")
+
+for idom in deployed_mdom_list[:]:
     if idom in mdom_exclude_list:
         continue
     print(f"reading {idom} dom")

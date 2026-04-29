@@ -17,12 +17,13 @@ VERICAL_PASS="skua"
 with open(monidaq_devices_path, "r") as fh:
     device_list = json.load(fh)
     for fh in device_list[:]:
-        print(fh["fieldhub_id"])
-        print(len(fh["devices"]))
-        for idevice in fh["devices"]:
-            print(idevice["icm_id"], idevice["board_name"])
-            command = f"curl -s -u {VERICAL_USER}:{VERICAL_PASS} -o {data_dir}{fh['fieldhub_id']}_{idevice['board_name']}_{idevice['icm_id']}.json {BASE_URL}/monidaq/in-ice/{fh['fieldhub_id']}/{idevice['icm_id']}/raw"
-            subprocess.run(command, shell=True, capture_output=True, text=True)
+        if fh["fieldhub_id"] in [f"fieldhub92"]:
+            print(fh["fieldhub_id"])
+            print(len(fh["devices"]))
+            for idevice in fh["devices"]:
+                print(idevice["icm_id"], idevice["board_name"])
+                command = f"curl -s -u {VERICAL_USER}:{VERICAL_PASS} -o {data_dir}{fh['fieldhub_id']}_{idevice['board_name']}_{idevice['icm_id']}.json {BASE_URL}/monidaq/in-ice/{fh['fieldhub_id']}/{idevice['icm_id']}/raw"
+                subprocess.run(command, shell=True, capture_output=True, text=True)
         # curl -s -u $VERICAL_USER:$VERICAL_PASS -o monidaq_device_list.json "$BASE_URL/monidaq/device-list/raw?download=1"
 
 

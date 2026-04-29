@@ -12,7 +12,6 @@ home = str(Path.home())
 
 data_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/"
 
-
 def main():
 
     cmdParser = argparse.ArgumentParser()

@@ -301,8 +301,11 @@ def count_DOM_PMTs(degg_list):
 
 # count_DOM_PMTs(degg_list)
 
-transit_params(degg_list,[-30,-10])
-transit_params(degg_list,[-30,50])
-    
+def main():
+    transit_params(degg_list,[-30,-10])
+    transit_params(degg_list,[-30,50])
+
+if __name__ == "__main__":
+    main()
     
 # make_transit_plots(degg_list)

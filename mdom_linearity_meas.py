@@ -74,21 +74,23 @@ mdom_duplicate_list = ["mDOM_D074_v1","mDOM_M030_v1","mDOM_M049_v1","mDOM_M063_v
 #                      "mDOM_D074_v1","mDOM_D075_v1","mDOM_D076_v1",
 #                      "mDOM_D079_v1","mDOM_M168_v1"]
 
+missing_linearity_list = ['mDOM_D032_v1', 'mDOM_D035_v1', 'mDOM_D036_v1', 'mDOM_D041_v1', 'mDOM_D047_v1', 'mDOM_D070_v1', 'mDOM_D071_v1', 'mDOM_D074_v1', 'mDOM_D075_v1', 'mDOM_D076_v1', 'mDOM_D079_v1', 'mDOM_M168_v1']
+
 deployed_mdom_list = [imdom for imdom in mdom_list if imdom.split('_v')[0] in deployed_device_list]
 
 print(f"{len(deployed_mdom_list)} out of {len(mdom_list)} are deployed")
 for idom in deployed_mdom_list[:]:
     print(f"{idom} {idom.split('_v')[0]}")
-    if idom in mdom_exclude_list:
+    if idom in []:
         continue
 
     print(f"reading {idom} dom")
     subprocess.call(f"python get_mdom_linearity_meas.py {idom}",shell=True)
 
 # folder_list = sorted(glob.glob(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/*"))
-folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/") if f.is_dir()]
+folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_linearity/") if f.is_dir()]
 folder_list = [ifolder.split("/")[-1] for ifolder in folder_list]
-missing_mdom = [imdom for imdom in mdom_list if imdom not in folder_list]
+missing_mdom = [imdom for imdom in deployed_mdom_list if imdom not in folder_list]
 print(f"There are {len(missing_mdom)} missing dom measurements")
 print(missing_mdom)
 

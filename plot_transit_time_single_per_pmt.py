@@ -126,7 +126,7 @@ def plot_transit_time_proxy_histogram(transit_times_msu, transit_times_desy, plo
     plt.close()
 
 
-def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[45,65],no_component=None) -> None:
+def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[-10,4*10**5],no_component=None) -> None:
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
@@ -143,7 +143,7 @@ def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[45,65],no_com
         ax.text(0.95, 0.85, fr"DESY RSS: {np.mean(rse_desy):.0f}"+r"$\pm$" + fr" {np.std(rse_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     # ax.text(0.95, 0.75, fr"Combined RSS: {np.mean(rse_msu+rse_desy):.0f}"+r"$\pm$" + fr" {np.std(rse_msu+rse_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     ax.grid(True,alpha=0.6)
-    # ax.set_xlim(xlim[0],xlim[1])
+    ax.set_xlim(xlim[0],xlim[1])
     ax.legend(fontsize=12,ncols=1)
     plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
@@ -189,7 +189,7 @@ def main() -> None:
     rse_msu = extract_rse_site(transit_times_single_per_pmt_file, mdom_tt_dir, site_str="_M", obj_key="b", filter_non_zero=False)
     rse_desy = extract_rse_site(transit_times_single_per_pmt_file, mdom_tt_dir, site_str="_D", obj_key="b", filter_non_zero=False)
     # plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(0,20,41),xlim=[0,20])
-    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.4*10**6],no_component=True)
-    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final_components",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.4*10**6],no_component=None)
+    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.05*10**6],no_component=True)
+    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final_components",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.05*10**6],no_component=None)
 if __name__ == "__main__":
     main()

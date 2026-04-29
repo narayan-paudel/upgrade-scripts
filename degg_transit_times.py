@@ -28,7 +28,7 @@ degg_exclude_list = ["DEgg2020-1-015_v2","DEgg2020-2-017_v1","DEgg2020-2-021_v1"
                      "DEgg2020-2-067_v1","DEgg2020-2-068_v1","DEgg2020-2-069_v1",
                      "DEgg2020-2-072_v1","DEgg2020-2-074_v1","DEgg2020-2-075_v1"]
 
-for idom in degg_list[:]:
+for idom in degg_list[:1]:
     if idom in degg_exclude_list:
         continue
     print(f"reading {idom} dom")

@@ -117,51 +117,55 @@ degg_list_pass = ["DEgg2020-1-001","DEgg2020-1-002","DEgg2020-1-003","DEgg2020-1
 
 print(f"DEGG pass list {len(degg_list_pass)}")
 
-# folder_list = sorted(glob.glob(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/*"))
-folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/") if f.is_dir()]
-folder_list = [ifolder.split("/")[-1] for ifolder in folder_list]
-missing_degg = [idegg for idegg in degg_list if idegg not in folder_list]
-folder_list_name = [idegg.split("_v")[0] for idegg in folder_list]
-folder_list_name = [idegg.lower() for idegg in folder_list_name]
-# print(folder_list_name)
-missing_degg_pass = [idegg for idegg in degg_list_pass if idegg.lower() not in folder_list_name]
-found_degg_pass = [idegg for idegg in degg_list_pass if idegg.lower() in folder_list_name]
-print(f"found pass degg {len(found_degg_pass)} missing {missing_degg_pass}")
-print(f"There are {len(missing_degg)} missing dom measurements")
-print(missing_degg)
-n = 0
-for idegg in folder_list[:2]:
-    file_list = sorted(glob.glob(home+f"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/{idegg}/*"))
-    file_list_20 = [ifile for ifile in file_list if extract_temperature(ifile) < -10] #seperates meas taken at ~ -20 C
-    device_list = [extract_subdevice(ifile) for ifile in file_list_20]
-    device_sets = list(set(device_list))
-    for idevice in device_sets:
-        meas_file = [ifile for ifile in file_list_20 if extract_subdevice(ifile) == idevice]
-        latest_meas_list = []
-        latest_meas = meas_file[0]
-        ymeas_latest = extract_yvalues(latest_meas)
-        print(f"first file {meas_file[1]}")
-        for ifile in meas_file[1:]:
-            iymeas = extract_yvalues(ifile)
-            if iymeas == ymeas_latest:
-                print(f"duplicate measurements in {idegg}")
-                print(f"{iymeas} and {ymeas_latest}")
-            else:
-                print(f"unique measurements in {idegg} at similar temp")
-                print(f"{extract_temperature(ifile)} and {extract_temperature(meas_file[0])}")
+def main():
+    # folder_list = sorted(glob.glob(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/*"))
+    folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/") if f.is_dir()]
+    folder_list = [ifolder.split("/")[-1] for ifolder in folder_list]
+    missing_degg = [idegg for idegg in degg_list if idegg not in folder_list]
+    folder_list_name = [idegg.split("_v")[0] for idegg in folder_list]
+    folder_list_name = [idegg.lower() for idegg in folder_list_name]
+    # print(folder_list_name)
+    missing_degg_pass = [idegg for idegg in degg_list_pass if idegg.lower() not in folder_list_name]
+    found_degg_pass = [idegg for idegg in degg_list_pass if idegg.lower() in folder_list_name]
+    print(f"found pass degg {len(found_degg_pass)} missing {missing_degg_pass}")
+    print(f"There are {len(missing_degg)} missing dom measurements")
+    print(missing_degg)
+    n = 0
+    for idegg in folder_list[:2]:
+        file_list = sorted(glob.glob(home+f"/research_ua/icecube/upgrade/timing_calibration/data/degg_transit/{idegg}/*"))
+        file_list_20 = [ifile for ifile in file_list if extract_temperature(ifile) < -10] #seperates meas taken at ~ -20 C
+        device_list = [extract_subdevice(ifile) for ifile in file_list_20]
+        device_sets = list(set(device_list))
+        for idevice in device_sets:
+            meas_file = [ifile for ifile in file_list_20 if extract_subdevice(ifile) == idevice]
+            latest_meas_list = []
+            latest_meas = meas_file[0]
+            ymeas_latest = extract_yvalues(latest_meas)
+            print(f"first file {meas_file[1]}")
+            for ifile in meas_file[1:]:
+                iymeas = extract_yvalues(ifile)
+                if iymeas == ymeas_latest:
+                    print(f"duplicate measurements in {idegg}")
+                    print(f"{iymeas} and {ymeas_latest}")
+                else:
+                    print(f"unique measurements in {idegg} at similar temp")
+                    print(f"{extract_temperature(ifile)} and {extract_temperature(meas_file[0])}")
 
-        if len(meas_file) > 1:
-            print(f"{idevice}")
-    if len(device_sets)>2:
-        print(f"DOM {idegg} has {len(device_sets)} devices and {len(device_list)} meas")
-        if len(file_list_20) == 4:
-            n+=1
-            print(f"DEgg {idegg} has {len(file_list_20)} meas files")
-            for ifile in file_list_20:
-                print(f"Meas file {ifile.split("/")[-1]} has temp {extract_temperature(ifile)}")
-print(n)
+            if len(meas_file) > 1:
+                print(f"{idevice}")
+        if len(device_sets)>2:
+            print(f"DOM {idegg} has {len(device_sets)} devices and {len(device_list)} meas")
+            if len(file_list_20) == 4:
+                n+=1
+                print(f"DEgg {idegg} has {len(file_list_20)} meas files")
+                for ifile in file_list_20:
+                    print(f"Meas file {ifile.split("/")[-1]} has temp {extract_temperature(ifile)}")
+    print(n)
 
 
 
 
-# python degg_meas_detail.py -i /Users/epaudel/research_ua/icecube/upgrade/timing_calibration/data/domlist/uids_degg.json
+    # python degg_meas_detail.py -i /Users/epaudel/research_ua/icecube/upgrade/timing_calibration/data/domlist/uids_degg.json
+
+if __name__ == "__main__":
+    main()

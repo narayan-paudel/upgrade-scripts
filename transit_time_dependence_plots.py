@@ -383,6 +383,7 @@ def plot_single_transit_time_histogram(mDOM_prod_id, channel, mdom_tt_dir, plotF
             data = json.load(f)
             transit_times = []
             y_values = data["meas_data"][0]['y_values']
+            # print(f"sum of y values {ifile} {sum(y_values)}")
             x_min = data["meas_data"][0]["x_min"]
             x_max = data["meas_data"][0]["x_max"]
             n_bins = data["meas_data"][0]["n_bins"]
@@ -523,20 +524,26 @@ def main() -> None:
     plot_single_transit_time_histogram("mDOM_M063", 5, mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
     #################################################################
     #fringe fit checking
-    plot_single_transit_time_histogram("mDOM_D090",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D090",12,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D090",16,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D090",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D090",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D090",23,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D084",1,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D176",15,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D089",18,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D070",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_D211",10,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_M173",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
-    plot_single_transit_time_histogram("mDOM_M093",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[658,629,649,562,128,647,135,657])
-    plot_single_transit_time_histogram("mDOM_M033",17,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",12,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",16,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D090",23,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D084",1,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D176",15,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D089",18,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D070",19,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_D211",10,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,70],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_M173",20,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
+    # plot_single_transit_time_histogram("mDOM_M093",5,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[658,629,649,562,128,647,135,657])
+    # plot_single_transit_time_histogram("mDOM_M033",17,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
+
+
+    #########random examples#################
+    plot_single_transit_time_histogram("mDOM_M005",3,mdom_tt_dir, plotFolder,fit_line=True,fit_xlim=[45,75],exclude_runs=[])
+
+
 
 
 

@@ -8,12 +8,28 @@ from bson.objectid import ObjectId
 from fatcat_db.forwarder import Tunnel
 from fatcat_db.mongoreader import MongoReader
 
+import numpy as np
+
 from pathlib import Path
 home = str(Path.home())
 
 
 # 2025-01-15 - example script to grab mdom pmt transit time measurements
 output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/mdom_transit/"
+
+
+def extract_channel(doc):
+    channel_dict = {"mb channel":np.nan}
+    device_uid = doc["device_uid"]
+    pmt = doc['subdevice_uid'].split('_')[-1]
+    channel = doc["meas_data"][2]["value"]
+    channel_dict["mb channel"] = channel
+    for j,ielt in enumerate(doc["meas_data"][1:]):
+        channel_dict[ielt["label"]] = ielt["value"]
+
+    print(f"channel {channel_dict['mb channel']}")
+    return channel_dict["mb channel"]
+
 
 
 def main():
@@ -41,6 +57,7 @@ def main():
     print('{0} measurements found'.format(len(docs)))
 
     pmts = []
+    channels = []
     for doc in docs:
         del doc['_id']
         del doc['insert_meta']
@@ -50,17 +67,19 @@ def main():
         pmts.append(pmt)
         run = doc['run_number']
         time = doc["meas_time"]
+        channel = extract_channel(doc)
+        channels.append(channel)
 
         mdomdir = output_dir+mdom
         if not os.path.exists(mdomdir):
             os.makedirs(mdomdir)
-        filename = (mdomdir+'/{0}_{1}_{2}_{3}.json'.format(mdom, pmt, run, time))
+        filename = (mdomdir+'/{0}_ch_{1}_{2}_{3}.json'.format(mdom, int(channel), pmt, run))
         print('writing', filename)
         with open(filename, 'w') as jfile:
             json.dump(doc, jfile, separators=(', ', ': '), indent=4)
 
     
-    for pmt in pmts:
+    for pmt,ch in zip(pmts, channels):
         dm = pmt.split('_')[-1]
         docs = list(mongo.db.measurements.find({'subdevice_uid': pmt,
                                                 'meas_site': 'aachen',
@@ -71,7 +90,7 @@ def main():
             del doc['insert_meta']
             del doc['daq_config']
 
-            pmtdir = mdomdir+'/'+pmt
+            pmtdir = mdomdir+'/'+pmt+"_"+str(ch)
             if not os.path.exists(pmtdir):
                 os.makedirs(pmtdir)
             filename = (pmtdir+'/{0}_{1}.json'.format(pmt, n+1))

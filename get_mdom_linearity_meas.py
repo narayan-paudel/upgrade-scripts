@@ -8,6 +8,8 @@ from bson.objectid import ObjectId
 from fatcat_db.forwarder import Tunnel
 from fatcat_db.mongoreader import MongoReader
 
+import numpy as np
+
 from pathlib import Path
 home = str(Path.home())
 
@@ -15,6 +17,18 @@ home = str(Path.home())
 # 2025-01-15 - example script to grab mdom pmt transit time measurements
 output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/mdom_linearity/"
 
+def extract_channel(doc):
+    channel_dict = {"mb channel":np.nan}
+    device_uid = doc["device_uid"]
+    pmt = doc['subdevice_uid'].split('_')[-1]
+    channel = doc["meas_data"][0]["value"]
+    channel_dict["mb channel"] = channel
+    for j,ielt in enumerate(doc["meas_data"][0:]):
+        if "value" in ielt:
+            channel_dict[ielt["label"]] = ielt["value"]
+
+    print(f"channel {channel_dict['mb channel']}")
+    return channel_dict["mb channel"]
 
 def main():
 
@@ -41,6 +55,7 @@ def main():
     print('{0} measurements found'.format(len(docs)))
 
     pmts = []
+    channels = []
     for doc in docs:
         del doc['_id']
         del doc['insert_meta']
@@ -50,12 +65,14 @@ def main():
         pmts.append(pmt)
         run = doc['run_number']
         time = doc["meas_time"]
+        channel = extract_channel(doc)
+        channels.append(channel)
         # print(f"time: {time}")
 
         mdomdir = output_dir+mdom
         if not os.path.exists(mdomdir):
             os.makedirs(mdomdir)
-        filename = (mdomdir+'/{0}_{1}_{2}_{3}.json'.format(mdom, pmt, run, time))
+        filename = (mdomdir+'/{0}_ch_{1}_{2}_{3}.json'.format(mdom,int(channel), pmt, run))
         print('writing', filename)
         with open(filename, 'w') as jfile:
             json.dump(doc, jfile, separators=(', ', ': '), indent=4)        
