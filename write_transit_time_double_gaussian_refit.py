@@ -14,6 +14,10 @@ from transit_time_dependence_plots import (extract_json, extract_json_tts_filter
 
 from refit_bad_tt_fits import merge_bins_reduceat
 
+from transit_time_file_paths import (geometry_files,mdom_tt_dir,
+                                     run_picks_json,refit_json,
+                                     empty_meas_json,transit_time_file)
+
 import json
 
 from pathlib import Path
@@ -217,16 +221,6 @@ def rewrite_json_unique_double_gaussian_refit_tt(transit_time_file,mdom_tt_dir )
 
 
 def main() -> None:
-    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
-    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
-    mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
-    plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
-    run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
-    refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_tt_needing_refit.json"
-    empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
-
-    transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
-    transit_times = extract_json(transit_time_file,obj_key="mu",filter_non_zero=False)
     transit_times_single_per_pmt_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json"
     # rewrite_json_unique_tt(transit_time_file, mdom_tt_dir, run_picks_json, refit_json, empty_meas_json, filter_non_zero=False, check_outliers=[40,60])
     rewrite_json_unique_double_gaussian_refit_tt(transit_times_single_per_pmt_file, mdom_tt_dir)

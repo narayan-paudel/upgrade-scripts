@@ -571,7 +571,7 @@ def get_mDOM_missing_channels(mdom_list):
     return mdom_dict
 
 
-get_mDOM_missing_channels(combined_mdom_list_deployed)
+
 
 def get_device_list(string,device,geometry_files):
     device_list = []
@@ -645,6 +645,9 @@ def main():
 
     print(f"FAT mDOM list of deployed mDOMs has {len(combined_mdom_list_deployed)} entries")
     get_transit_time_dict(combined_mdom_list_deployed) #gives all runs of transit time measurement
+
+
+    get_mDOM_missing_channels(combined_mdom_list_deployed)
 
 
 

@@ -68,11 +68,7 @@ def get_device_list(string,device):
     # print(f"device list for {device} on string {string} {len(device_list)} {device_list}")
     return device_list
 
-# deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
-deployed_device_list = get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
 
-combined_mdom_list = mdom_list_msu + mdom_list_desy
-# combined_mean_plot(mdom_list_desy,mdom_list_msu)
 def get_mdom_production_id(mdom_path_name):
     '''
     extract production id from mdom path name
@@ -81,10 +77,7 @@ def get_mdom_production_id(mdom_path_name):
 
 
 
-combined_mdom_list_deployed = [imdom for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list]
 
-
-print(f"combined mdom list {len(combined_mdom_list_deployed)}")
 
 
 def prod_id_to_icm_id(prod_id):
@@ -138,7 +131,7 @@ def get_nominal_hv_prod_id(prod_id,channel):
     icm_id = prod_id_to_icm_id(prod_id)
     return get_nominal_hv_icm_id(icm_id,channel)
 
-print(f"nominal hv for {prod_id_to_icm_id(get_mdom_production_id(combined_mdom_list[0]))} is {get_nominal_hv_icm_id(prod_id_to_icm_id(get_mdom_production_id(combined_mdom_list[0])),channel=0)}")
+# print(f"nominal hv for {prod_id_to_icm_id(get_mdom_production_id(combined_mdom_list[0]))} is {get_nominal_hv_icm_id(prod_id_to_icm_id(get_mdom_production_id(combined_mdom_list[0])),channel=0)}")
 
 def extract_channel(json_file):
     with open(json_file, 'r') as f:
@@ -197,6 +190,22 @@ def get_fat_transit_time(prod_id,channel):
         return mu_list[0],hv_list[0]
     else:
         return np.nan, np.nan
+    
+def get_fat_hv(fat_tt_file,prod_id,channel):
+    '''
+    get transit time for a given production id and channel
+    '''
+    hv_value = np.nan    
+    with open(fat_tt_file, 'r') as f:
+        data = json.load(f)
+        for mdom, tt_data in data.items():
+            print(f"Checking mdom: {mdom}, prod_id: {prod_id}")
+            if mdom in [prod_id]:
+                    if channel in tt_data["transit_times"].keys():
+                        for itt in tt_data["transit_times"][channel]:
+                            if len(itt) > 0 and not np.isnan(itt["mu"]) and not np.isnan(itt["applied HV"]):
+                                hv_value =  itt["applied HV"]
+    return hv_value
 
 
 
@@ -219,8 +228,7 @@ def get_both_transit_time(prod_id,channel):
     tt_ice = tt_fat * (hv_fat/nominal_hv)**(0.5)
     return tt_fat,tt_ice
 
-tt_fat, hv_fat = get_both_transit_time(get_mdom_production_id(combined_mdom_list_deployed[0]),channel=0)
-print(f"fat transit time {tt_fat} ns at hv {hv_fat}")
+
 
 
 def transit_time_hist(mdom_list):
@@ -258,7 +266,6 @@ def transit_time_hist(mdom_list):
 
 def transit_time_diff_hist(mdom_list):
     transit_times_diff = []
-
     for imdom in mdom_list:
         prod_id = get_mdom_production_id(imdom)
         for ichannel in range(24):
@@ -283,6 +290,59 @@ def transit_time_diff_hist(mdom_list):
     plt.savefig(plotFolder+f"/diff_transit_time.pdf",transparent=False,bbox_inches='tight')
     plt.close()
     
-transit_time_diff_hist(combined_mdom_list_deployed)
+def fat_vs_ice_hv_scatter(mdom_list,transit_times_single_gaussian_file=transit_times_single_gaussian_file):
+    hv_fat_list = []
+    hv_ice_list = []
+    hv_diff_list = []
+    for imdom in mdom_list:
+        prod_id = get_mdom_production_id(imdom)
+        for ichannel in range(24):
+            hv_ice = get_nominal_hv_prod_id(prod_id,ichannel)
+            hv_fat = get_fat_hv(transit_times_single_gaussian_file,prod_id,ichannel)
+            print(f"prod id {prod_id} channel {ichannel} hv fat {hv_fat} hv ice {hv_ice}")
+            hv_fat_list.append(hv_fat)
+            hv_ice_list.append(hv_ice)
+            if not np.isnan(hv_fat) and not np.isnan(hv_ice):
+                hv_diff_list.append(hv_ice - hv_fat)
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    ax.scatter(hv_fat_list, hv_ice_list, color=colorsCustom[0], alpha=0.7, label='data')
+    ax.plot([min(hv_fat_list), max(hv_fat_list)], [min(hv_fat_list), max(hv_fat_list)], color='red', linestyle='--', label='y=x')
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r"$V_{FAT}$ [V]", fontsize=22)
+    ax.set_ylabel(r"$V_{Ice}$ [V]", fontsize=22)
+    ax.text(0.05, 0.95, fr"mean $V_{{{'FAT'}}}$: {np.mean(hv_fat_list):.0f}"+f" \u00B1"+fr" {np.std(hv_fat_list):.0f} V", transform=ax.transAxes, ha='left', va='top')
+    ax.text(0.05, 0.85, fr"mean $V_{{{'Ice'}}}$: {np.mean(hv_ice_list):.0f}"+f" \u00B1"+fr" {np.std(hv_ice_list):.0f} V", transform=ax.transAxes, ha='left', va='top')
+    ax.grid(True,alpha=0.6)
+    ax.legend(fontsize=12,ncols=1)
+    plt.savefig(plotFolder+f"/hv_fat_vs_hv_ice.png",transparent=False,bbox_inches='tight')
+    plt.savefig(plotFolder+f"/hv_fat_vs_hv_ice.pdf",transparent=False,bbox_inches='tight')
+    plt.close()
 
 
+
+
+
+
+def main():
+    # deployed_device_list = get_device_list("87","mDOM") + get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+    deployed_device_list = get_device_list("88","mDOM") + get_device_list("89","mDOM") + get_device_list("90","mDOM") + get_device_list("91","mDOM") + get_device_list("92","mDOM")
+
+    combined_mdom_list = mdom_list_msu + mdom_list_desy
+    combined_mdom_list_deployed = [imdom for imdom in combined_mdom_list if get_mdom_production_id(imdom) in deployed_device_list]
+
+
+    print(f"combined mdom list {len(combined_mdom_list_deployed)}")
+    # combined_mean_plot(mdom_list_desy,mdom_list_msu)
+    transit_time_diff_hist(combined_mdom_list_deployed)
+    tt_fat, hv_fat = get_both_transit_time(get_mdom_production_id(combined_mdom_list_deployed[0]),channel=0)
+    print(f"fat transit time {tt_fat} ns at hv {hv_fat}")
+
+    transit_times_single_gaussian_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json"
+
+
+    fat_vs_ice_hv_scatter(combined_mdom_list_deployed, transit_times_single_gaussian_file)
+
+if __name__ == "__main__":
+    main()

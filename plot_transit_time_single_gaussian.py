@@ -15,6 +15,11 @@ from transit_time_dependence_plots import (extract_json, extract_json_tts_filter
 from refit_bad_tt_fits import merge_bins_reduceat
 from transit_time_fit_functions import gaussian
 
+
+from transit_time_file_paths import (geometry_files,mdom_tt_dir,
+                                     run_picks_json,refit_json,
+                                     empty_meas_json,transit_time_file)
+
 import json
 
 from pathlib import Path
@@ -23,6 +28,7 @@ home = str(Path.home())
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["mathtext.fontset"] = "dejavuserif"
 plt.rcParams.update({'font.size': 10})
+
 
 
 # colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']
@@ -102,27 +108,51 @@ def extract_rse_site(transit_time_file, mdom_tt_dir, site_str, obj_key, filter_n
     return data_values
 
 
-def plot_transit_time_proxy_histogram(transit_times_msu, transit_times_desy, plot_name,bins=200,xlim=[45,65]) -> None:
+def plot_transit_time_histogram(transit_times_msu, transit_times_desy, plot_name,bins=200,xlim=[45,65],no_component=None) -> None:
     fig = plt.figure(figsize=(8,5))
     gs = gridspec.GridSpec(nrows=1,ncols=1)
     ax = fig.add_subplot(gs[0])
-    transit_times_desy = [ielt for ielt in transit_times_desy if not np.isnan(ielt)]
-    transit_times_msu = [ielt for ielt in transit_times_msu if not np.isnan(ielt)]
-    # ax.hist(transit_times_msu, bins=bins,histtype='step',color=colorsCustom[0],linewidth=1.5 ,label=r'MSU tt', alpha=1)
-    # ax.hist(transit_times_desy, bins=bins,histtype='step',color=colorsCustom[1],linewidth=1.5 ,label=r'DESY tt', alpha=1)
+    if no_component is None:
+        ax.hist(transit_times_msu, bins=bins,histtype='step',color=colorsCustom[0],linewidth=1.5 ,label=r'MSU tt', alpha=1)
+        ax.hist(transit_times_desy, bins=bins,histtype='step',color=colorsCustom[1],linewidth=1.5 ,label=r'DESY tt', alpha=1)
     ax.hist(transit_times_desy+transit_times_msu, bins=bins,histtype='step',color=colorsCustom[2],linewidth=1.5 ,label=r'Combined tt', alpha=1)
     ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
     ax.set_xlabel(r"time [ns]", fontsize=22)
     ax.set_ylabel(r"count", fontsize=22)
     ax.set_yscale('log')
-    # ax.text(0.95, 0.95, fr"MSU tt: {np.mean(transit_times_msu):.0f}"+r"$\pm$" + fr" {np.std(transit_times_msu):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
-    # ax.text(0.95, 0.85, fr"DESY tt: {np.mean(transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
+    if no_component is None:
+        ax.text(0.95, 0.95, fr"MSU tt: {np.mean(transit_times_msu):.0f}"+r"$\pm$" + fr" {np.std(transit_times_msu):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
+        ax.text(0.95, 0.85, fr"DESY tt: {np.mean(transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     ax.text(0.95, 0.75, fr"Combined tt: {np.mean(transit_times_msu+transit_times_desy):.0f}"+r"$\pm$" + fr" {np.std(transit_times_msu+transit_times_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
     ax.grid(True,alpha=0.6)
     ax.set_xlim(xlim[0],xlim[1])
     ax.legend(fontsize=12,ncols=1)
     plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
     plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
+    plt.close()
+
+def plot_transit_time_spread_histogram(transit_times_spread_msu, transit_times_spread_desy, plot_name,bins=200,xlim=[0,1],no_component=None) -> None:
+    fig = plt.figure(figsize=(8,5))
+    gs = gridspec.GridSpec(nrows=1,ncols=1)
+    ax = fig.add_subplot(gs[0])
+    if no_component is None:
+        ax.hist(transit_times_spread_msu, bins=bins,histtype='step',color=colorsCustom[0],linewidth=1.5 ,label=r'MSU tts', alpha=1)
+        ax.hist(transit_times_spread_desy, bins=bins,histtype='step',color=colorsCustom[1],linewidth=1.5 ,label=r'DESY tts', alpha=1)
+    ax.hist(transit_times_spread_desy+transit_times_spread_msu, bins=bins,histtype='step',color=colorsCustom[2],linewidth=1.5 ,label=r'Combined tts', alpha=1)
+    ax.tick_params(axis='both',which='both', direction='in', labelsize=22)
+    ax.set_xlabel(r"time [ns]", fontsize=22)
+    ax.set_ylabel(r"count", fontsize=22)
+    ax.set_yscale('log')
+    if no_component is None:
+        ax.text(0.95, 0.95, fr"MSU tts: {np.mean(transit_times_spread_msu):.1f}"+r"$\pm$" + fr" {np.std(transit_times_spread_msu):.1f}  ns", transform=ax.transAxes, ha='right', va='top')
+        ax.text(0.95, 0.85, fr"DESY tts: {np.mean(transit_times_spread_desy):.1f}"+r"$\pm$" + fr" {np.std(transit_times_spread_desy):.1f}  ns", transform=ax.transAxes, ha='right', va='top')
+    ax.text(0.95, 0.75, fr"Combined tts: {np.mean(transit_times_spread_msu+transit_times_spread_desy):.1f}"+r"$\pm$" + fr" {np.std(transit_times_spread_msu+transit_times_spread_desy):.1f}  ns", transform=ax.transAxes, ha='right', va='top')
+    ax.grid(True,alpha=0.6)
+    ax.set_xlim(xlim[0],xlim[1])
+    ax.legend(fontsize=12,ncols=1)
+    plt.savefig(plot_name+".png",transparent=False,bbox_inches='tight')
+    plt.savefig(plot_name+".pdf",transparent=False,bbox_inches='tight')
+    # plt.show()
     plt.close()
 
 
@@ -140,6 +170,7 @@ def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[45,65],no_com
     ax.set_xlabel(r"Residual sum of squares", fontsize=22)
     ax.set_ylabel(r"count", fontsize=22)
     ax.set_yscale('log')
+    ax.set_xscale('log')
     if no_component is None:
         ax.text(0.95, 0.95, fr"MSU RSS: {np.mean(rse_msu):.0f}"+r"$\pm$" + fr" {np.std(rse_msu):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
         ax.text(0.95, 0.85, fr"DESY RSS: {np.mean(rse_desy):.0f}"+r"$\pm$" + fr" {np.std(rse_desy):.0f}  ns", transform=ax.transAxes, ha='right', va='top')
@@ -156,33 +187,34 @@ def plot_rse_histogram(rse_msu, rse_desy, plot_name,bins=200,xlim=[45,65],no_com
 def main() -> None:
     C_msu = 23.9 #ns
     C_desy = 25.5 #ns
-    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
-    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
-    mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
     plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
-    run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
-    refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_tt_needing_refit.json"
-    empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
-
-    transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
     transit_times_single_per_pmt_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json"
     transit_times_single_gaussian_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json"
     # transit_times = extract_json(transit_time_file,obj_key="mu",filter_non_zero=False)
     # transit_times_single_per_pmt = extract_json_unique_tt(transit_time_file,run_picks_json,refit_json,empty_meas_json,obj_key="mu",filter_non_zero=True)
     transit_times_single_per_pmt_msu = extract_json_site(transit_times_single_gaussian_file,site_str="_M",obj_key="b",filter_non_zero=False)
     transit_times_single_per_pmt_desy = extract_json_site(transit_times_single_gaussian_file,site_str="_D",obj_key="b",filter_non_zero=False)
+    transit_times_spread_single_per_pmt_msu = extract_json_site(transit_times_single_gaussian_file,site_str="_M",obj_key="c",filter_non_zero=False)
+    transit_times_spread_single_per_pmt_desy = extract_json_site(transit_times_single_gaussian_file,site_str="_D",obj_key="c",filter_non_zero=False)
     # print(transit_times_single_per_pmt)
     #####################################
     #############plot histogram##########
-    plot_transit_time_proxy_histogram(transit_times_single_per_pmt_msu, transit_times_single_per_pmt_desy, plotFolder+"/transit_time_gaussian_refit_histogram_final",bins=np.linspace(45,65,41),xlim=[45,65])
+    plot_transit_time_histogram(transit_times_single_per_pmt_msu, transit_times_single_per_pmt_desy, plotFolder+"/transit_time_gaussian_refit_histogram_final",bins=np.linspace(45,65,41),xlim=[45,65])
     transit_times_single_per_pmt_desy_corrected = [tt - C_desy for tt in transit_times_single_per_pmt_desy]
     transit_times_single_per_pmt_msu_corrected = [tt - C_msu for tt in transit_times_single_per_pmt_msu]
-    plot_transit_time_proxy_histogram(transit_times_single_per_pmt_msu_corrected, transit_times_single_per_pmt_desy_corrected,plotFolder+"/transit_time_gaussian_refit_histogram_final_corrected",bins=np.linspace(20,40,41),xlim=[20,40])
+    plot_transit_time_histogram(transit_times_single_per_pmt_msu_corrected, transit_times_single_per_pmt_desy_corrected,plotFolder+"/transit_time_gaussian_refit_histogram_final_corrected",bins=np.linspace(20,40,41),xlim=[20,40])
+    plot_transit_time_histogram(transit_times_single_per_pmt_msu_corrected, transit_times_single_per_pmt_desy_corrected,plotFolder+"/transit_time_gaussian_refit_histogram_final_corrected_components",bins=np.linspace(20,40,41),xlim=[20,40],no_component=None)
+
+    plot_transit_time_spread_histogram(transit_times_spread_single_per_pmt_msu,transit_times_spread_single_per_pmt_desy,plotFolder+"/transit_time_spread_single_gaussian_histogram_final",bins=np.linspace(0,5,21),xlim=[0,5],no_component=None)
     #######################################
     ###########plot residual###############
     rse_msu = extract_json_site(transit_times_single_gaussian_file, site_str="_M", obj_key="RSS", filter_non_zero=False)
     rse_desy = extract_json_site(transit_times_single_gaussian_file, site_str="_D", obj_key="RSS", filter_non_zero=False)
     # plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_histogram_final",bins=np.linspace(0,20,41),xlim=[0,20])
-    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_gaussian_histogram_final",bins=np.linspace(-5,0.4*10**6,1000),xlim=[-5,0.4*10**6],no_component=True)
+    print(f"plotting rse histogam")
+    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_gaussian_histogram_final",bins=np.linspace(-10**4,0.4*10**7,500),xlim=[-10**4,0.5*10**7],no_component=True)
+    plot_rse_histogram(rse_msu, rse_desy, plotFolder+"/rse_gaussian_histogram_final_components",bins=np.linspace(-10**4,0.4*10**7,500),xlim=[-10**4,0.05*10**7],no_component=None)
+
+
 if __name__ == "__main__":
     main()

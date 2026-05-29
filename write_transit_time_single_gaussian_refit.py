@@ -9,10 +9,19 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
-from transit_time_dependence_plots import (extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram,
-                                           prod_id_to_icm_id,extract_channel,extract_fit_params)
+from transit_time_dependence_plots import (extract_json, extract_json_tts_filter, extract_json_min_tts_filter,
+                                           extract_json_tts_chi2_filter,plot_single_transit_time_histogram,
+                                           prod_id_to_icm_id,extract_channel,extract_fit_params,
+                                           extract_run_number)
 
 from refit_bad_tt_fits import merge_bins_reduceat
+
+from mdom_transit_time_constants import C_msu, C_desy,mean_tt_desy,mean_tt_msu
+from transit_time_file_paths import (geometry_files,mdom_tt_dir,
+                                     run_picks_json,refit_json,
+                                     empty_meas_json,transit_time_file,
+                                     desy_comb_json,transit_time_file_single_pick,
+                                     bad_data_json)
 
 import json
 
@@ -31,17 +40,22 @@ colorsCustom = ['#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fc
 def gaussian(x, A, mu, sigma):
     return A * np.exp(-(x - mu)**2 / (2 * sigma**2))
 
-def get_single_gaussian_fit(mDOM_prod_id, channel, mdom_tt_dir) -> None:
+def get_single_gaussian_fit(mDOM_prod_id, channel,run, mdom_tt_dir,desy_comb_json) -> None:
     '''Plots the transit time histogram for a single mDOM and all its channels'''
     meas_files = glob.glob(f"{mdom_tt_dir}/{mDOM_prod_id}*/*.json")
-    meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel]
+    meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel and extract_run_number(ifile) == run]
+    with open(desy_comb_json, 'r') as f:
+        desy_comb_data = json.load(f)
+    desi_comb_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in desy_comb_data]
+    if len(meas_files)>1:
+        print(f"multiple meas files {len(meas_files)}")
     remove_pedestal = None
     merge_bins = None
     A1, mu1, sigma1, reduced_chi2, RSS = np.nan, np.nan, np.nan, np.nan, np.nan
     if mDOM_prod_id in ["mDOM_D092"] and channel == 1:        
         merge_bins = 2
         print(f"{merge_bins} consecutive bins merged for {mDOM_prod_id} channel {channel}")
-    if mDOM_prod_id in ["mDOM_D029"] and channel == 1 or mDOM_prod_id in ["mDOM_D034"] and channel == 21:
+    if mDOM_prod_id+"_"+str(channel) in desi_comb_mdoms_pmt:
         remove_pedestal = 0
         print(f"pedestal {remove_pedestal} removed for {mDOM_prod_id} channel {channel}")
 
@@ -71,12 +85,12 @@ def get_single_gaussian_fit(mDOM_prod_id, channel, mdom_tt_dir) -> None:
                 y_values, x_values = merge_bins_reduceat(y_values, x_values, n=merge_bins)
             initial_guess = [np.max(y_values), 55, 5]
             bounds = ([0, 45, 0.1], #lower limits
-                       [np.max(y_values)+100, 65, 5])      # upper limits
+                       [np.max(y_values)+100, 65, 6])      # upper limits
             poisson_errors = np.sqrt(np.asarray(y_values))
             poisson_errors[poisson_errors == 0] = 1
 
             try:
-                popt, pcov = curve_fit(gaussian,x_values,y_values,p0=initial_guess,bounds=bounds,sigma=poisson_errors,absolute_sigma=True)
+                popt, pcov = curve_fit(gaussian,x_values,y_values,p0=initial_guess,bounds=bounds,maxfev=10000,sigma=poisson_errors,absolute_sigma=True)
                 A1, mu1, sigma1 = popt
                 y_fit = gaussian(x_values, A1, mu1, sigma1)
                 residuals = y_values - y_fit
@@ -94,7 +108,7 @@ def get_single_gaussian_fit(mDOM_prod_id, channel, mdom_tt_dir) -> None:
     return A1, mu1, sigma1, reduced_chi2, RSS
 
 
-def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir ) -> list:
+def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir,desy_comb_json,bad_data_json ) -> list:
     '''
     Reads the json file with the list of DOMs and transit time measurements and returns a list of transit times
     and other data values
@@ -107,6 +121,10 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir ) -> lis
         data = json.load(f)
         for mdom, tt_data in data.items():
             mdom_list.append(mdom)
+    with open(bad_data_json, 'r') as f:
+        badfit_data = json.load(f)
+    badfit_data_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in badfit_data]
+
 
     print(f"MDOMs: {len(mdom_list)}")
     channels = [int(ichannel) for ichannel in np.linspace(0,23,24)]
@@ -114,21 +132,44 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir ) -> lis
     for mdom in mdom_list:
         pmt_dict = {}
         icm_id = data[mdom]["icm_id"]
+        if "_M" in mdom:
+            Correction = C_msu
+            mean_tt = mean_tt_msu
+        elif "_D" in mdom:
+            Correction = C_desy
+            mean_tt = mean_tt_desy
         for channel in channels:
             tt_data = data[f"{mdom}"]
             if len(tt_data["transit_times"][f"channel_{channel}"])> 1:
                 print(f"refitting {mdom} channel {channel} but has multiple runs {tt_data["transit_times"][f"channel_{channel}"]}")
             tt_info_list = tt_data["transit_times"][f"channel_{channel}"]
             if len(tt_info_list) > 0:
+                if not len(tt_info_list)==1:
+                    print(f"Multiple entries data {len(tt_info_list)==1}")
                 tt_info = tt_data["transit_times"][f"channel_{channel}"][0]
-                A1, mu1, sigma1, reduced_chi2, RSS = get_single_gaussian_fit(mdom, int(channel), mdom_tt_dir)
-                tt_info["mu"] = mu1 - 12
-                tt_info["sigma"] = sigma1
-                tt_info["a"] = A1
-                tt_info["b"] = mu1
-                tt_info["c"] = sigma1
-                tt_info["chi2"] = reduced_chi2
-                tt_info["RSS"] = RSS
+                # print(f"{tt_info}")
+                if len(tt_info) > 0:
+                    run = tt_info["run_number"]
+                    if mdom+"_"+str(channel) in badfit_data_mdoms_pmt:
+                        tt_info["mu"] = mean_tt["mu"]
+                        tt_info["sigma"] = mean_tt["sigma"]
+                        tt_info["a"] = np.nan
+                        tt_info["b"] = mean_tt["mu"] + Correction
+                        tt_info["c"] = mean_tt["sigma"]
+                        tt_info["chi2"] = np.nan
+                        tt_info["RSS"] = np.nan
+                    else:
+                        A1, mu1, sigma1, reduced_chi2, RSS = get_single_gaussian_fit(mdom, int(channel),int(run), mdom_tt_dir, desy_comb_json)
+                        if sigma1 <= 0.5:
+                            print(f"unrealistically small sigma {sigma1} for {mdom} channel {channel} run {run}, skipping refit results")
+                        tt_info["mu"] = mu1 - Correction
+                        tt_info["sigma"] = sigma1
+                        tt_info["a"] = A1
+                        tt_info["b"] = mu1
+                        tt_info["c"] = sigma1
+                        tt_info["chi2"] = reduced_chi2
+                        tt_info["RSS"] = RSS
+
                 tt_info_elt = [tt_info]
                 pmt_dict[f"channel_{channel}"] = tt_info_elt
         mdom_dict[mdom] = {"icm_id": icm_id, "transit_times": pmt_dict}
@@ -136,27 +177,24 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir ) -> lis
         pmt_dict_ordered = {channel: pmt_dict.get(channel, []) for channel in channels_list}                
         mdom_dict[mdom] = {"icm_id": icm_id, "transit_times": pmt_dict_ordered}
     with open('/Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json', 'w') as f:
-        json.dump(mdom_dict, f, indent=4)      
-
-
-
-
+        json.dump(mdom_dict, f, indent=4)
 
 
 def main() -> None:
-    upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
-    geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
-    mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
-    plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
-    run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
-    refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_tt_needing_refit.json"
-    empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
+    # upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
+    # geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
+    # mdom_tt_dir = home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/"
+    # plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
+    # # run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
+    # run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks_with_MSU_list.json"
+    # refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_tt_needing_refit.json"
+    # empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
 
-    transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
+    # transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
     transit_times = extract_json(transit_time_file,obj_key="mu",filter_non_zero=False)
     transit_times_single_per_pmt_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json"
     # rewrite_json_unique_tt(transit_time_file, mdom_tt_dir, run_picks_json, refit_json, empty_meas_json, filter_non_zero=False, check_outliers=[40,60])
-    rewrite_json_unique_gaussian_refit_tt(transit_times_single_per_pmt_file, mdom_tt_dir)
+    rewrite_json_unique_gaussian_refit_tt(transit_times_single_per_pmt_file, mdom_tt_dir, desy_comb_json,bad_data_json)
 
 if __name__ == "__main__":
     main()
