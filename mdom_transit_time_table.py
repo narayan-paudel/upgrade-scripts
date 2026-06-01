@@ -42,6 +42,10 @@ R12199_tt = 43 #ns
 R12199_tts = 1.92 #ns
 R15458_02_tts = 1.4 #ns
 
+from transit_time_file_paths import (geometry_files,mdom_tt_dir,
+                                     run_picks_json,refit_json,
+                                     empty_meas_json,transit_time_file)
+
 
 
 def extract_histogram(json_file):

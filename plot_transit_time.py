@@ -61,6 +61,11 @@ def extract_device(json_file):
         data = json.load(f)
     return data["device_uid"],data["subdevice_uid"]
 
+def extract_run_number(json_file):
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    return data["run_number"]
+
 
 def get_chi2(json_file):
     '''
@@ -109,8 +114,10 @@ def extract_fit_params(json_file):
     fit_y_values = data["meas_data"][0]["fit_y_values"]
     # chi2,pvalue = stats.chisquare(y_values,fit_y_values,ddof=3,sum_check=True)
     chi2,pvalue = stats.chisquare(y_values,fit_y_values,ddof=3,sum_check=False)
+    ndof = len(y_values) - 3
+    reduced_chi2 = chi2/ndof
     fit_params = data["meas_data"][0]["fit_params"]
-    return *fit_params,chi2,pvalue
+    return *fit_params,reduced_chi2,pvalue
 
 def plot_temp(temp_list,temp_limits):
     print(f"min {min(temp_list)}max{max(temp_list)}")
