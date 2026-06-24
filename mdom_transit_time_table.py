@@ -433,22 +433,17 @@ def extract_transit_time(mdom_list):
         mdom_name = imdom.split("/")[-1]
         mdom_name = mdom_name.split("_")[0]+"_"+mdom_name.split("_")[1]
         icm_id = prod_id_to_icm_id(mdom_name)
-        # print(f"mDOM name {mdom_name} {icm_id}")
         ifiles = sorted(glob.glob(imdom+"/m*_pmt_*.json"))
-        PMT_list = [re.search(r"(DM\d+)", ifilename).group(1) for ifilename in ifiles]
-        PMT_list = list(set(PMT_list))
-        # print(f"pmt list   {len(PMT_list)} {PMT_list}")
-        pmt_dict = {}
-        pmt_dict_new = {}
-        for ipmt in PMT_list:
-            # pmt_dict = {}
-            ifiles_this_pmt = sorted(glob.glob(imdom+f"/m*_pmt_{ipmt}*.json"))
-            # print(f"files for {ipmt} {len(ifiles_this_pmt)}")
+        channel_list = [re.search(r"(ch_\d+)", ifilename).group(1) for ifilename in ifiles]
+        channel_list = list(set(channel_list))
+        channel_dict_new = {}
+        for ichannel in channel_list:
+            ifiles_this_channel = sorted(glob.glob(imdom+f"/m*_{ichannel}*.json"))
             mu_list = []
             sigma_list = []
             hv_list = []
             tt_info_map = []
-            for ifile in ifiles_this_pmt:
+            for ifile in ifiles_this_channel:
                 mu,sigma,a,b,c,chi2,ihv = extract_fit_params(ifile)
                 itemp = extract_temperature(ifile)
                 channel = extract_channel(ifile)
@@ -456,29 +451,12 @@ def extract_transit_time(mdom_list):
                 run_number = extract_run_number(ifile)
                 tt_info = {"run_number": run_number, "mu": mu, "sigma": sigma,"a": a, "b": b, "c": c, "chi2": chi2,"applied HV": ihv, "temperature": itemp}
                 tt_info_map.append(tt_info)
-                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma)\
-                #     and not np.isnan(a) and not np.isnan(b) and not np.isnan(c) and not np.isnan(chi2):
-                # if mu > -500 and sigma < 500 and not np.isnan(mu) and not np.isnan(sigma):
                 mu_list.append(mu)
                 sigma_list.append(sigma)
-            # if len(mu_list)>0:
-            #     if len(mu_list)==1:
-            #         tt = mu_list[0]
-            #         best_mu = tt
-            #     else:
-            #         tt = min(mu_list, key=lambda x: abs(x - R12199_tt))
-            #         # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements with mean {tt:.1f} and std {np.std(mu_list):.1f}")
-            # best_mu = np.median(mu_list)
-            # print(f"mDOM {mdom_name} pmt {ipmt} has {len(mu_list)} measurements")
-            # print(f"mDOM {mdom_name} pmt {ipmt} channel {channel} has mean transit time {tt:.1f} and {mu_list}")
-            pmt_dict[f"channel_{channel}"] = [mu_list,hv_list]
-            pmt_dict_new[f"channel_{channel}"] = tt_info_map
-        # mdom_dict[mdom_name] = pmt_dict
-        # print(f"PMT dict new for mDOM {mdom_name} {pmt_dict_new}")
+            channel_dict_new[f"channel_{channel}"] = tt_info_map
         channels = [f"channel_{i}" for i in range(0,24)]
-        pmt_dict_ordered = {channel: pmt_dict_new.get(channel, []) for channel in channels}
-        # print(f"pmt_dict_ordered for mDOM {mdom_name}: {pmt_dict_ordered}")
-        mdom_dict[mdom_name] = {"icm_id": icm_id, "transit_times": pmt_dict_ordered}
+        channel_dict_ordered = {channel: channel_dict_new.get(channel, []) for channel in channels}
+        mdom_dict[mdom_name] = {"icm_id": icm_id, "transit_times": channel_dict_ordered}
     return mdom_dict
 
 
