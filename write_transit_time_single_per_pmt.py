@@ -1,25 +1,19 @@
 # !/usr/bin/env python
 import glob
-from subprocess import run
 
 import numpy as np
-import scipy.stats as stats
 from scipy.optimize import curve_fit
 
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 
-from transit_time_dependence_plots import (extract_json, extract_json_tts_filter, extract_json_min_tts_filter, extract_json_tts_chi2_filter,plot_single_transit_time_histogram,
-                                           prod_id_to_icm_id,extract_channel,extract_fit_params)
+from transit_time_dependence_plots import (extract_channel,extract_fit_params)
 
 from refit_bad_tt_fits import merge_bins_reduceat
 from mdom_transit_time_constants import C_msu, C_desy,mean_tt_desy,mean_tt_msu
 
-from transit_time_file_paths import (geometry_files,mdom_tt_dir,
+from transit_time_file_paths import (mdom_tt_dir,
                                      run_picks_json,refit_json,
                                      empty_meas_json,transit_time_file,
-                                     transit_time_file_single_pick,
-                                     desy_comb_json,
                                      bad_data_json)
 import json
 
@@ -135,7 +129,6 @@ def rewrite_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
         for channel in channels:
             if mdom in run_picks_data_mdoms:
                 select_mdom_run_data = [ielt for ielt in run_picks_data if ielt["mDOM"] == mdom][0]
-                print(f"debug {channel}")
                 select_channel_run_data = [ielt for ielt in select_mdom_run_data["select_run"] if int(ielt["channel"]) == int(channel)][0]
                 select_run = select_channel_run_data["run"]
                 tt_data = data[f"{mdom}"]
@@ -173,7 +166,6 @@ def rewrite_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
                 tt_data = data[f"{mdom}"]
                 if len(tt_data["transit_times"][f"channel_{channel}"])> 1:
                     print(f"regular {mdom} channel {channel} but has multiple runs {tt_data["transit_times"][f"channel_{channel}"]}")
-                print(f"mdom {mdom} channel {channel}")
                 tt_info_list = tt_data["transit_times"][f"channel_{channel}"]
                 #for corrected transit time data
 
@@ -191,7 +183,8 @@ def rewrite_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
         pmt_dict_ordered = {channel: pmt_dict.get(channel, []) for channel in channels_list}                
         mdom_dict[mdom] = {"icm_id": icm_id, "transit_times": pmt_dict_ordered}
     with open('/Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json', 'w') as f:
-        json.dump(mdom_dict, f, indent=4)      
+        json.dump(mdom_dict, f, indent=4)
+    print(f"Transit time dict saved to /Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json")      
 
 
 
@@ -199,9 +192,6 @@ def rewrite_json_unique_tt(transit_time_file,mdom_tt_dir ,run_picks_file,need_re
 
 
 def main() -> None:
-    plotFolder: str = home+"/research_ua/icecube/Upgrade/timing_calibration/plots/mdom_transit"
-    transit_times = extract_json(transit_time_file,obj_key="mu",filter_non_zero=False)
-    # rewrite_json_unique_tt(transit_time_file, mdom_tt_dir, run_picks_json, refit_json, empty_meas_json, filter_non_zero=False, check_outliers=[40,60])
     rewrite_json_unique_tt(transit_time_file, mdom_tt_dir, run_picks_json, refit_json, empty_meas_json,bad_data_json, filter_non_zero=False, check_outliers=[40,60])
 
 if __name__ == "__main__":

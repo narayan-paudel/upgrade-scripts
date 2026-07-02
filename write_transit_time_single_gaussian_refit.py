@@ -158,6 +158,7 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir,desy_com
                         tt_info["c"] = mean_tt["sigma"]
                         tt_info["chi2"] = np.nan
                         tt_info["RSS"] = np.nan
+                        tt_info["default"] = True
                     else:
                         A1, mu1, sigma1, reduced_chi2, RSS = get_single_gaussian_fit(mdom, int(channel),int(run), mdom_tt_dir, desy_comb_json)
                         if sigma1 <= 0.5:
@@ -169,15 +170,39 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir,desy_com
                         tt_info["c"] = sigma1
                         tt_info["chi2"] = reduced_chi2
                         tt_info["RSS"] = RSS
+                        tt_info["default"] = False
+                elif not tt_info:
+                    print(f"Empty data {'empty'} for {mdom} channel {channel},using degault ")
+                    tt_info["run_number"] = np.nan
+                    tt_info["mu"] = mean_tt["mu"]
+                    tt_info["sigma"] = mean_tt["sigma"]
+                    tt_info["a"] = np.nan
+                    tt_info["b"] = mean_tt["mu"] + Correction
+                    tt_info["c"] = mean_tt["sigma"]
+                    tt_info["chi2"] = np.nan
+                    tt_info["RSS"] = np.nan
+                    tt_info["default"] = True
 
-                tt_info_elt = [tt_info]
-                pmt_dict[f"channel_{channel}"] = tt_info_elt
+            elif len(tt_info_list) == 0:
+                tt_info = {}
+                tt_info["run_number"] = np.nan
+                tt_info["mu"] = mean_tt["mu"]
+                tt_info["sigma"] = mean_tt["sigma"]
+                tt_info["a"] = np.nan
+                tt_info["b"] = mean_tt["mu"] + Correction
+                tt_info["c"] = mean_tt["sigma"]
+                tt_info["chi2"] = np.nan
+                tt_info["RSS"] = np.nan
+                tt_info["default"] = True
+            tt_info_elt = [tt_info]
+            pmt_dict[f"channel_{channel}"] = tt_info_elt
         mdom_dict[mdom] = {"icm_id": icm_id, "transit_times": pmt_dict}
         channels_list = [f"channel_{i}" for i in range(0,24)]
         pmt_dict_ordered = {channel: pmt_dict.get(channel, []) for channel in channels_list}                
         mdom_dict[mdom] = {"icm_id": icm_id, "transit_times": pmt_dict_ordered}
     with open('/Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json', 'w') as f:
         json.dump(mdom_dict, f, indent=4)
+    print(f"Transit time dict saved to /Users/epaudel/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json")
 
 
 def main() -> None:

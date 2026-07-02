@@ -16,6 +16,7 @@ home = str(Path.home())
 
 # 2025-01-15 - example script to grab mdom pmt transit time measurements
 output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/mdom_transit/"
+# output_dir = home+"/research_ua/icecube/Upgrade/timing_calibration/data/mdom_transit_NTS/" #temporarily for NTS mdoms
 
 
 def extract_channel(doc):

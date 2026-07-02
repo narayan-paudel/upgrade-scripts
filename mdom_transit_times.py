@@ -25,7 +25,7 @@ usage: python mdom_transit_times.py -i
 print(home)
 
 cmdParser = argparse.ArgumentParser()
-cmdParser.add_argument('-i', '--input',type=str, dest='input', 
+cmdParser.add_argument('-i', '--input',type=str, dest='input', default="/Users/epaudel/research_ua/icecube/upgrade/timing_calibration/data/domlist/uids_mdom.json",
                        help='input json file to read')
 args = cmdParser.parse_args()
 
@@ -49,7 +49,9 @@ def get_device_list(string,device,geometry_files):
 upgrade_commissioning_scripts = home+"/research_ua/icecube/software/upgrade_commissioning_scripts/"
 
 geometry_files = sorted(glob.glob(upgrade_commissioning_scripts+"/geometry/string_*geometry*.json"))
-deployed_device_list = (get_device_list("88","mDOM",geometry_files) + 
+deployed_device_list = 
+deployed_device_list = (get_device_list("87","mDOM",geometry_files)+
+get_device_list("88","mDOM",geometry_files) + 
 get_device_list("89","mDOM",geometry_files) + 
 get_device_list("90","mDOM",geometry_files) + 
 get_device_list("91","mDOM",geometry_files) + 
@@ -88,7 +90,8 @@ for idom in deployed_mdom_list[:]:
 # folder_list = sorted(glob.glob(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/*"))
 folder_list = [f.path for f in os.scandir(home+"/research_ua/icecube/upgrade/timing_calibration/data/mdom_transit/") if f.is_dir()]
 folder_list = [ifolder.split("/")[-1] for ifolder in folder_list]
-missing_mdom = [imdom for imdom in mdom_list if imdom not in folder_list]
+# missing_mdom = [imdom for imdom in mdom_list if imdom not in folder_list]
+missing_mdom = [imdom for imdom in deployed_mdom_list if imdom not in folder_list]
 print(f"There are {len(missing_mdom)} missing dom measurements")
 print(missing_mdom)
 

@@ -24,6 +24,24 @@ Getting transit time data for devices in the list
 Plot transit time
 *  python plot_transit_time_mDOMs.py
 
+Create a json file of mdom transit times from files downloaded from FAT
+* python mdom_transit_time_table.py 
+* has multiple runs that were available
+
+Select mdom transit times from good runs ensuring single tt per pmt
+* python write_transit_time_single_per_pmt.py
+
+Produces mdom rransit time after gaussian refit
+* python write_transit_time_single_gaussian_refit.py
+
+Produced final mdom transit time params file
+* python produce_mdom_transit_time_params.py
+
+Wrapper shell scripts that does this
+* ./create_mdom_transit_time_json.sh
+
+
+
 
 
 

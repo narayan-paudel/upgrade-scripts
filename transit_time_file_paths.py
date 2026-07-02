@@ -11,9 +11,10 @@ refit_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_
 empty_meas_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_empty_meas.json"
 transit_time_file = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time.json"
 transit_time_file_single_pick = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_single_pick.json"
-# transit_time_file_gaussian_refit = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json"
+transit_time_file_gaussian_refit = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_time_gaussian_refit.json"
 degg_transit_times_v0 = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/degg_transit_times_v0.json"
 mdom_transit_times_v0 = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mdom_transit_times_v0.json"
+
 #a copy of transit_time_file_gaussian_refit with default average value for missing data
 
 # run_picks_json = home+"/research_ua/icecube/upgrade/timing_calibration/scripts/mDOM_tt_run_picks.json"
