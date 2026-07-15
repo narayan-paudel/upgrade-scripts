@@ -46,7 +46,7 @@ def get_single_gaussian_fit(mDOM_prod_id, channel,run, mdom_tt_dir,desy_comb_jso
     meas_files = [ifile for ifile in meas_files if extract_channel(ifile) == channel and extract_run_number(ifile) == run]
     with open(desy_comb_json, 'r') as f:
         desy_comb_data = json.load(f)
-    desy_comb_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in desy_comb_data]
+    desi_comb_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in desy_comb_data]
     if len(meas_files)>1:
         print(f"multiple meas files {len(meas_files)}")
     remove_pedestal = None
@@ -55,9 +55,9 @@ def get_single_gaussian_fit(mDOM_prod_id, channel,run, mdom_tt_dir,desy_comb_jso
     if mDOM_prod_id in ["mDOM_D092"] and channel == 1:        
         merge_bins = 2
         print(f"{merge_bins} consecutive bins merged for {mDOM_prod_id} channel {channel}")
-    # if mDOM_prod_id+"_"+str(channel) in desy_comb_mdoms_pmt:
-    #     remove_pedestal = 0
-    #     print(f"pedestal {remove_pedestal} removed for {mDOM_prod_id} channel {channel}")
+    if mDOM_prod_id+"_"+str(channel) in desi_comb_mdoms_pmt:
+        remove_pedestal = 0
+        print(f"pedestal {remove_pedestal} removed for {mDOM_prod_id} channel {channel}")
 
     for i,ifile in enumerate(meas_files):
         with open(ifile, 'r') as f:
@@ -124,10 +124,6 @@ def rewrite_json_unique_gaussian_refit_tt(transit_time_file,mdom_tt_dir,desy_com
     with open(bad_data_json, 'r') as f:
         badfit_data = json.load(f)
     badfit_data_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in badfit_data]
-    with open(desy_comb_json, 'r') as f:
-        desy_comb_data = json.load(f)
-    desy_comb_mdoms_pmt = [ielt["mDOM"]+"_"+ielt["channel"] for ielt in desy_comb_data]
-    badfit_data_mdoms_pmt += desy_comb_mdoms_pmt #treat desy_comb_data as bad data for refitting
 
 
     print(f"MDOMs: {len(mdom_list)}")
